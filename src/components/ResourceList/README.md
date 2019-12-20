@@ -107,7 +107,7 @@ function ResourceListWithEmptyStateExample() {
             {label: 'PNG', value: 'png'},
             {label: 'MP4', value: 'mp4'},
           ]}
-          onChange={() =>{}}
+          onChange={() => {}}
         />
       ),
       shortcut: true,
@@ -115,7 +115,12 @@ function ResourceListWithEmptyStateExample() {
   ];
 
   const filterControl = (
-    <Filters disabled={!items.length} queryValue="" filters={filters} appliedFilters={appliedFilters} />
+    <Filters
+      disabled={!items.length}
+      queryValue=""
+      filters={filters}
+      appliedFilters={appliedFilters}
+    />
   );
 
   const emptyState = (
