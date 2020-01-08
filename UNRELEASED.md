@@ -5,6 +5,7 @@
 ### Enhancements
 
 - Added `hideTags` prop to `Filters` ([#2573](https://github.com/Shopify/polaris-react/pull/2573))
+- Added support for an in context empty state to `ResourceList` by using the new `emptyState` and `showEmptyState` props ([#2569](https://github.com/Shopify/polaris-react/pull/2569))
 
 ### Bug fixes
 

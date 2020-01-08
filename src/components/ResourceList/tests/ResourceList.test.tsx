@@ -389,7 +389,7 @@ describe('<ResourceList />', () => {
       );
     });
 
-    it('does not render when items is empty and hasMoreItems is unset', () => {
+    it('does not render when items is empty', () => {
       const resourceList = mountWithAppProvider(
         <ResourceList items={[]} renderItem={renderItem} />,
       );
@@ -479,7 +479,6 @@ describe('<ResourceList />', () => {
     it('does not render when EmptySearchResult exists', () => {
       const resourceList = mountWithAppProvider(
         <ResourceList
-          hasMoreItems
           items={[]}
           renderItem={renderItem}
           filterControl={<div>fake filterControl</div>}
@@ -694,7 +693,6 @@ describe('<ResourceList />', () => {
     it('renders when filterControl exists and items is empty', () => {
       const resourceList = mountWithAppProvider(
         <ResourceList
-          hasMoreItems
           items={[]}
           renderItem={renderItem}
           filterControl={<div>fake filterControl</div>}

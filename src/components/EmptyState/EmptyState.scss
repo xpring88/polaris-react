@@ -61,6 +61,8 @@ $illustration-width-cropped: calc(
 }
 
 .withinContentContainer {
+  margin: 0 auto;
+
   .Section {
     position: unset;
     flex-direction: column-reverse;
