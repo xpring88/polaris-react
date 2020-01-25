@@ -36,6 +36,7 @@ import {
   Stack,
   Caption,
   Thumbnail,
+  ThemeProvider,
 } from '../src';
 
 export function DetailsPage() {
@@ -349,12 +350,16 @@ export function DetailsPage() {
               />
             </FormLayout>
           </Card>
-          <Card title="Media" sectioned>
-            <DropZone onDrop={handleDropZoneDrop}>
-              {uploadedFiles}
-              {fileUpload}
-            </DropZone>
-          </Card>
+        </Layout.Section>
+        <Layout.Section>
+          <ThemeProvider theme={{colorScheme: 'inverse'}}>
+            <Card title="Media" sectioned>
+              <DropZone onDrop={handleDropZoneDrop}>
+                {uploadedFiles}
+                {fileUpload}
+              </DropZone>
+            </Card>
+          </ThemeProvider>
         </Layout.Section>
         <Layout.Section secondary>
           <Card title="Organization">
