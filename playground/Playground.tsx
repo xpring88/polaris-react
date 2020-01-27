@@ -25,8 +25,8 @@ export function Playground() {
           style={{
             backgroundColor: '#001731',
             '--p-card-shadow': 'rgba(0,0,0,0)',
-            margin: '0 -16px',
-            padding: '0 16px 16px',
+            margin: '0 -28px',
+            padding: '28px',
             borderRadius: 'var(--p-border-radius-wide)',
           }}
         >
