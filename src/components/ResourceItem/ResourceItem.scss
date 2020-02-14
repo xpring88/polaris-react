@@ -168,7 +168,7 @@ $resource-list-item-variables: (
   padding: resource-list-item(padding) spacing();
   min-height: resource-list-item(min-height);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
   @include breakpoint-after(resource-list-item(breakpoint-small)) {
     padding: resource-list-item(padding) spacing(loose);
@@ -177,7 +177,6 @@ $resource-list-item-variables: (
 
 .Owned {
   display: flex;
-  align-self: flex-start;
 }
 
 // Item handle
@@ -227,7 +226,6 @@ $resource-list-item-variables: (
 .Content {
   @include layout-flex-fix;
   flex: 1 1 auto;
-  align-self: center;
 }
 
 // Item actions
