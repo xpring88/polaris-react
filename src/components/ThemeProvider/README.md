@@ -179,7 +179,7 @@ A theme provider can be nested within the theme provider rendered by the app pro
 
 ## Consuming theme colors in a component
 
-The theme provider component uses [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) to share color values with components. For a full list of available CSS Custom Properties, see [these docs](link/to/polaris/tokens/docs).
+The theme provider component uses [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) to share color values with components. For a full list of available CSS custom properties, see the [Polaris tokens docs](link/to/polaris/tokens/docs).
 
 We apply the current design language value to the fallback value of the `var()` function in order to gracefull fall back when `{newDesignLanguage: false}`, as the theme CSS Custom Properties will not be defined.
 
