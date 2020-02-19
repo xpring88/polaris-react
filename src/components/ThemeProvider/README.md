@@ -213,7 +213,7 @@ Using the `linear-gradient()` function as a fallback to the `var()` function cau
 
 ## Creating a component with an inverse color scheme
 
-Some components render themselves with a dark color scheme in a light context, or a light color scheme in a dark context, in order to create contrast with surrounding elements. The theme provider component enables this behavior when `'inverse'` is passed as a color scheme to a nested theme provider wrapping a component.
+To create contrast with surrounding elements, some components render themselves with a dark color scheme in a light context or a light color scheme in a dark context. The theme provider component enables this behavior when `'inverse'` is passed as a color scheme to a nested theme provider wrapping a component.
 
 ```jsx
 return (
