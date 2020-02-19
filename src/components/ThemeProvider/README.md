@@ -6,6 +6,9 @@ keywords:
   - provider
   - color
   - logo
+  - color scheme
+  - light mode
+  - dark mode
 ---
 
 # Theme provider
