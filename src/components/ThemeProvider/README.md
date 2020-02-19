@@ -193,7 +193,7 @@ We apply the current design language value to the fallback value of the `var()` 
 
 ### Avoid using `linear-gradient()` as a `var()` fallback
 
-Using the `linear-gradient()` function as a fallback to the `var()` function causes infinite re-paints in Safari, and should be avoided. As an alternative, use the value provided to `newDesignLanguage` to create a class name for your component that is only present when that value is `true`.
+Using the `linear-gradient()` function as a fallback to the `var()` function causes infinite re-paints in Safari, and should be avoided. As an alternative, use the value provided to `newDesignLanguage` to create a class name for your component that's only present when that value is `true`.
 
 ```scss
 .Button {
