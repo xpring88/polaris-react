@@ -13,7 +13,7 @@ keywords:
 
 # Theme provider
 
-Theme provider is a component that enables sharing global theme settings throughout the hierarchy of your application. It is included by default as a child of the [app provider component](https://polaris.shopify.com/components/structure/app-provider), but can be used independently to apply a base theme, or to override a parent theme in its children.
+Use theme provider to share global theme settings throughout the hierarchy of your application. Theme provider is included by default as a child of the [app provider component](https://polaris.shopify.com/components/structure/app-provider) but can be used independently to apply a base theme or to override a parent theme in its children.
 
 ---
 
