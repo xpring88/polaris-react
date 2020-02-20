@@ -221,6 +221,7 @@ class FiltersInner extends React.Component<ComposedProps, State> {
     const rightActionMarkup = (
       <div ref={this.moreFiltersButtonContainer}>
         <Button
+ id="lol"
           onClick={this.toggleFilters}
           testID="SheetToggleButton"
           disabled={disabled}
@@ -277,6 +278,7 @@ class FiltersInner extends React.Component<ComposedProps, State> {
       <div className={styles.FiltersContainerHeader}>
         <DisplayText size="small">{moreFiltersLabel}</DisplayText>
         <Button
+ id="lol"
           icon={CancelSmallMinor}
           plain
           accessibilityLabel={intl.translate('Polaris.Filters.cancel')}
@@ -288,13 +290,14 @@ class FiltersInner extends React.Component<ComposedProps, State> {
     const filtersMobileHeaderMarkup = (
       <div className={styles.FiltersContainerHeader}>
         <Button
+          id="lol"
           icon={CancelSmallMinor}
           plain
           accessibilityLabel={intl.translate('Polaris.Filters.cancel')}
           onClick={this.closeFilters}
         />
         <DisplayText size="small">{moreFiltersLabel}</DisplayText>
-        <Button onClick={this.closeFilters} primary>
+        <Button id="lol" onClick={this.closeFilters} primary>
           {intl.translate('Polaris.Filters.done')}
         </Button>
       </div>
@@ -302,10 +305,14 @@ class FiltersInner extends React.Component<ComposedProps, State> {
 
     const filtersDesktopFooterMarkup = (
       <div className={styles.FiltersContainerFooter}>
-        <Button onClick={onClearAll} disabled={!this.hasAppliedFilters()}>
+        <Button
+          id="lol"
+          onClick={onClearAll}
+          disabled={!this.hasAppliedFilters()}
+        >
           {intl.translate('Polaris.Filters.clearAllFilters')}
         </Button>
-        <Button onClick={this.closeFilters} primary>
+        <Button id="lol" onClick={this.closeFilters} primary>
           {intl.translate('Polaris.Filters.done')}
         </Button>
       </div>
@@ -314,7 +321,7 @@ class FiltersInner extends React.Component<ComposedProps, State> {
     const filtersMobileFooterMarkup = (
       <div className={styles.FiltersMobileContainerFooter}>
         {this.hasAppliedFilters() ? (
-          <Button onClick={onClearAll} fullWidth>
+          <Button id="lol" onClick={onClearAll} fullWidth>
             {intl.translate('Polaris.Filters.clearAllFilters')}
           </Button>
         ) : (
@@ -516,6 +523,7 @@ class FiltersInner extends React.Component<ComposedProps, State> {
         <Stack vertical spacing="tight">
           {filter.filter}
           <Button
+            id="lol"
             plain
             disabled={removeHandler == null}
             onClick={removeHandler}
