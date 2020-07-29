@@ -1,3 +1,5 @@
+import type {Config} from '@shopify/polaris-tokens/dist-modern/types';
+
 export interface ThemeLogo {
   /** Provides a path for a logo used on a dark background */
   topBarSource?: string;
@@ -49,6 +51,8 @@ export interface ThemeConfig {
   logo?: ThemeLogo;
   colors?: Partial<RoleColors> & LegacyColors;
   colorScheme?: ColorScheme;
+  config?: Config;
+  frameOffset?: number;
 }
 
 export type CustomPropertiesLike = Record<string, string>;

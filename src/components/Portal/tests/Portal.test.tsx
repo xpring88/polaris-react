@@ -1,18 +1,19 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import {mount} from 'test-utilities';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider} from 'test-utilities/legacy';
+
 import {Portal} from '../Portal';
 import {portal} from '../../shared';
 
 jest.mock('react-dom', () => ({
-  ...require.requireActual('react-dom'),
+  ...(jest.requireActual('react-dom') as any),
   createPortal: jest.fn(),
 }));
 
 const {
   createPortal: createPortalSpy,
-}: {[key: string]: jest.Mock} = require.requireMock('react-dom');
+}: {[key: string]: jest.Mock} = jest.requireMock('react-dom');
 
 function lastSpyCall(spy: jest.Mock) {
   return spy.mock.calls.pop() as any[];
@@ -37,14 +38,16 @@ describe('<Portal />', () => {
       mountWithAppProvider(<Portal idPrefix={idPrefix} />);
       const [, portalNode] = lastSpyCall(createPortalSpy);
       expect(portalNode.getAttribute(portal.props[0])).toMatch(
-        new RegExp(`^${idPrefix}-portal`),
+        new RegExp(`^${idPrefix}-Polarisportal`),
       );
     });
 
     it('is ignored when not defined', () => {
       mountWithAppProvider(<Portal />);
       const [, portalNode] = lastSpyCall(createPortalSpy);
-      expect(portalNode.getAttribute(portal.props[0])).toMatch(/^portal/);
+      expect(portalNode.getAttribute(portal.props[0])).toMatch(
+        /^Polarisportal/,
+      );
     });
   });
 
@@ -73,9 +76,9 @@ describe('<Portal />', () => {
 
   it('has a child ref defined when onPortalCreated callback is called', () => {
     createPortalSpy.mockImplementation(
-      require.requireActual('react-dom').createPortal,
+      jest.requireActual('react-dom').createPortal,
     );
-    const ref: React.RefObject<HTMLDivElement> = React.createRef();
+    const ref: React.RefObject<HTMLDivElement> = createRef();
     const handlePortalCreated = jest.fn(() =>
       expect(ref.current).not.toBeNull(),
     );

@@ -1,8 +1,10 @@
-import * as React from 'react';
+import React from 'react';
+
 import {classNames} from '../../../../../../utilities/css';
-import {AvatarProps} from '../../../../../Avatar';
-import {ThumbnailProps} from '../../../../../Thumbnail';
+import type {AvatarProps} from '../../../../../Avatar';
+import type {ThumbnailProps} from '../../../../../Thumbnail';
 import {DisplayText} from '../../../../../DisplayText';
+import {useFeatures} from '../../../../../../utilities/features';
 
 import styles from './Title.scss';
 
@@ -11,7 +13,7 @@ export interface TitleProps {
   title?: string;
   /** Page subtitle, in regular type*/
   subtitle?: string;
-  /** Important and non-interactive status information shown immediately after the title. (stand-alone app use only) */
+  /** Important and non-interactive status information shown immediately after the title. */
   titleMetadata?: React.ReactNode;
   /** thumbnail that precedes the title */
   thumbnail?:
@@ -20,6 +22,7 @@ export interface TitleProps {
 }
 
 export function Title({title, subtitle, titleMetadata, thumbnail}: TitleProps) {
+  const {newDesignLanguage} = useFeatures();
   const titleMarkup = title ? (
     <div className={styles.Title}>
       <DisplayText size="large" element="h1">
@@ -29,7 +32,14 @@ export function Title({title, subtitle, titleMetadata, thumbnail}: TitleProps) {
   ) : null;
 
   const titleMetadataMarkup = titleMetadata ? (
-    <div className={styles.TitleMetadata}>{titleMetadata}</div>
+    <div
+      className={classNames(
+        styles.TitleMetadata,
+        newDesignLanguage && styles.newDesignLanguage,
+      )}
+    >
+      {titleMetadata}
+    </div>
   ) : null;
 
   const wrappedTitleMarkup = titleMetadata ? (

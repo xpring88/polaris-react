@@ -1,11 +1,12 @@
 import React from 'react';
 import {ArrowUpDownMinor} from '@shopify/polaris-icons';
+
 import {classNames} from '../../utilities/css';
 import {useFeatures} from '../../utilities/features';
 import {useUniqueId} from '../../utilities/unique-id';
 import {Labelled, LabelledProps, helpTextID} from '../Labelled';
 import {Icon} from '../Icon';
-import {Error} from '../../types';
+import type {Error} from '../../types';
 
 import styles from './Select.scss';
 
@@ -182,7 +183,9 @@ function isString(option: SelectOption | SelectGroup): option is string {
 }
 
 function isGroup(option: SelectOption | SelectGroup): option is SelectGroup {
-  return (option as SelectGroup).options != null;
+  return (
+    typeof option === 'object' && 'options' in option && option.options != null
+  );
 }
 
 function normalizeStringOption(option: string): StrictOption {

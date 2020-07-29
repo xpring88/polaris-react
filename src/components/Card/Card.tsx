@@ -1,10 +1,11 @@
 import React from 'react';
+
 import {useI18n} from '../../utilities/i18n';
 import {classNames} from '../../utilities/css';
 import {useToggle} from '../../utilities/use-toggle';
 import {WithinContentContext} from '../../utilities/within-content-context';
 import {ButtonGroup} from '../ButtonGroup';
-import {DisableableAction, ComplexAction} from '../../types';
+import type {DisableableAction, ComplexAction} from '../../types';
 import {ActionList} from '../ActionList';
 import {Button, buttonFrom} from '../Button';
 import {Popover} from '../Popover';
@@ -77,7 +78,7 @@ export const Card: React.FunctionComponent<CardProps> & {
       secondaryFooterActionsMarkup = buttonFrom(secondaryFooterActions[0]);
     } else {
       secondaryFooterActionsMarkup = (
-        <React.Fragment>
+        <>
           <Popover
             active={secondaryActionsPopoverOpen}
             activator={
@@ -90,7 +91,7 @@ export const Card: React.FunctionComponent<CardProps> & {
           >
             <ActionList items={secondaryFooterActions} />
           </Popover>
-        </React.Fragment>
+        </>
       );
     }
   }

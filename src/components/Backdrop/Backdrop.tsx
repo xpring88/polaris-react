@@ -2,6 +2,7 @@ import React from 'react';
 
 import {classNames} from '../../utilities/css';
 import {ScrollLock} from '../ScrollLock';
+
 import styles from './Backdrop.scss';
 
 export interface BackdropProps {
@@ -21,7 +22,7 @@ export function Backdrop(props: BackdropProps) {
   );
 
   return (
-    <React.Fragment>
+    <>
       <ScrollLock />
       <div
         className={className}
@@ -29,6 +30,6 @@ export function Backdrop(props: BackdropProps) {
         testID="Backdrop"
         onTouchStart={onTouchStart}
       />
-    </React.Fragment>
+    </>
   );
 }

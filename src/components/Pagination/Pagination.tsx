@@ -1,5 +1,11 @@
-import React from 'react';
-import {ArrowLeftMinor, ArrowRightMinor} from '@shopify/polaris-icons';
+import React, {createRef} from 'react';
+import {
+  ArrowLeftMinor,
+  ArrowRightMinor,
+  ChevronLeftMinor,
+  ChevronRightMinor,
+} from '@shopify/polaris-icons';
+
 import {TextStyle} from '../TextStyle';
 import {classNames} from '../../utilities/css';
 import {useI18n} from '../../utilities/i18n';
@@ -8,9 +14,12 @@ import {Icon} from '../Icon';
 import {UnstyledLink} from '../UnstyledLink';
 import {Tooltip} from '../Tooltip';
 import {KeypressListener} from '../KeypressListener';
-import {Key} from '../../types';
+import type {Key} from '../../types';
 import {handleMouseUpByBlurring} from '../../utilities/focus';
 import {useFeatures} from '../../utilities/features';
+import {Button} from '../Button';
+import {ButtonGroup} from '../ButtonGroup';
+import {ConditionalWrapper} from '../../utilities/components';
 
 import styles from './Pagination.scss';
 
@@ -38,7 +47,7 @@ export interface PaginationDescriptor {
   /** Callback when previous button is clicked */
   onPrevious?(): void;
   /** Text to provide more context in between the arrow buttons */
-  label?: string;
+  label?: React.ReactNode;
 }
 
 export interface PaginationProps extends PaginationDescriptor {
@@ -64,7 +73,7 @@ export function Pagination({
   const i18n = useI18n();
   const {newDesignLanguage} = useFeatures();
 
-  const node: React.RefObject<HTMLElement> = React.createRef();
+  const node: React.RefObject<HTMLElement> = createRef();
 
   const navLabel =
     accessibilityLabel || i18n.translate('Polaris.Pagination.pagination');
@@ -73,16 +82,10 @@ export function Pagination({
 
   const previousClassName = classNames(
     styles.Button,
-    newDesignLanguage && styles.newDesignLanguage,
     !label && styles.PreviousButton,
   );
 
-  const nextClassName = classNames(
-    styles.Button,
-    newDesignLanguage && styles.newDesignLanguage,
-    newDesignLanguage && styles.rightButton,
-    !label && styles.NextButton,
-  );
+  const nextClassName = classNames(styles.Button, !label && styles.NextButton);
 
   const previousButton = previousURL ? (
     <UnstyledLink
@@ -130,20 +133,49 @@ export function Pagination({
     </button>
   );
 
+  const prev = newDesignLanguage ? (
+    <Button
+      icon={ChevronLeftMinor}
+      accessibilityLabel={i18n.translate('Polaris.Pagination.previous')}
+      url={previousURL}
+      onClick={onPrevious}
+      disabled={!hasPrevious}
+    />
+  ) : (
+    previousButton
+  );
+
   const constructedPrevious =
     previousTooltip && hasPrevious ? (
-      <Tooltip content={previousTooltip}>{previousButton}</Tooltip>
+      <Tooltip activatorWrapper="span" content={previousTooltip}>
+        {prev}
+      </Tooltip>
     ) : (
-      previousButton
+      prev
     );
+
+  const next = newDesignLanguage ? (
+    <Button
+      icon={ChevronRightMinor}
+      accessibilityLabel={i18n.translate('Polaris.Pagination.next')}
+      url={nextURL}
+      onClick={onNext}
+      disabled={!hasNext}
+    />
+  ) : (
+    nextButton
+  );
 
   const constructedNext =
     nextTooltip && hasNext ? (
-      <Tooltip content={nextTooltip}>{nextButton}</Tooltip>
+      <Tooltip activatorWrapper="span" content={nextTooltip}>
+        {next}
+      </Tooltip>
     ) : (
-      nextButton
+      next
     );
 
+  const previousHandler = onPrevious || noop;
   const previousButtonEvents =
     previousKeys &&
     (previousURL || onPrevious) &&
@@ -155,11 +187,12 @@ export function Pagination({
         handler={
           previousURL
             ? handleCallback(clickPaginationLink('previousURL', node))
-            : handleCallback(onPrevious as () => void)
+            : handleCallback(previousHandler)
         }
       />
     ));
 
+  const nextHandler = onNext || noop;
   const nextButtonEvents =
     nextKeys &&
     (nextURL || onNext) &&
@@ -171,7 +204,7 @@ export function Pagination({
         handler={
           nextURL
             ? handleCallback(clickPaginationLink('nextURL', node))
-            : handleCallback(onNext as () => void)
+            : handleCallback(nextHandler)
         }
       />
     ));
@@ -184,18 +217,32 @@ export function Pagination({
     );
 
   const labelMarkup = label ? (
-    <div className={styles.Label} aria-live="polite">
+    <div
+      className={newDesignLanguage ? undefined : styles.Label}
+      aria-live="polite"
+    >
       {labelTextMarkup}
     </div>
   ) : null;
 
   return (
-    <nav className={className} aria-label={navLabel} ref={node}>
+    <nav
+      className={newDesignLanguage ? undefined : className}
+      aria-label={navLabel}
+      ref={node}
+    >
       {previousButtonEvents}
-      {constructedPrevious}
-      {labelMarkup}
       {nextButtonEvents}
-      {constructedNext}
+      <ConditionalWrapper
+        condition={Boolean(newDesignLanguage)}
+        wrapper={(children) => (
+          <ButtonGroup segmented={!label}>{children}</ButtonGroup>
+        )}
+      >
+        {constructedPrevious}
+        {labelMarkup}
+        {constructedNext}
+      </ConditionalWrapper>
     </nav>
   );
 }
@@ -222,3 +269,5 @@ function handleCallback(fn: () => void) {
     fn();
   };
 }
+
+function noop() {}

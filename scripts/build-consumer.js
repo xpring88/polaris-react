@@ -1,12 +1,15 @@
 /* eslint-disable no-console */
 
 const {resolve} = require('path');
-const {cp, mkdir, rm} = require('shelljs');
+
+const {config, cp, mkdir, rm} = require('shelljs');
 
 const packageJSON = require('../package.json');
 
 const root = resolve(__dirname, '..');
 const projectDir = process.argv[2];
+
+config.fatal = true;
 
 if (!projectDir) {
   console.log(
@@ -24,14 +27,16 @@ const files = [
   'README.md',
   'LICENSE.md',
   'CHANGELOG.md',
-  ...packageJSON.files,
+  // Handle exclusions in the files array by ignoring them
+  // This is a little inefficient but not the end of the world
+  ...packageJSON.files.filter((filename) => !filename.startsWith('!')),
 ];
 
 console.log('Cleaning up old build...');
 rm('-rf', projectPolarisDir);
 
 console.log('Creating new build directory...');
-mkdir(projectPolarisDir);
+mkdir('-p', projectPolarisDir);
 
 console.log('Copying build to node_modules...');
 cp('-R', files, projectPolarisDir);

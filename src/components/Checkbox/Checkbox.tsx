@@ -1,5 +1,6 @@
-import React, {useRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useRef, useImperativeHandle, useState} from 'react';
 import {MinusMinor, TickSmallMinor} from '@shopify/polaris-icons';
+
 import {classNames} from '../../utilities/css';
 import {useFeatures} from '../../utilities/features';
 import {useToggle} from '../../utilities/use-toggle';
@@ -40,7 +41,7 @@ export interface CheckboxProps {
   onBlur?(): void;
 }
 
-export const Checkbox = React.forwardRef<CheckboxHandles, CheckboxProps>(
+export const Checkbox = forwardRef<CheckboxHandles, CheckboxProps>(
   function Checkbox(
     {
       ariaDescribedBy: ariaDescribedByProp,
@@ -127,7 +128,7 @@ export const Checkbox = React.forwardRef<CheckboxHandles, CheckboxProps>(
     const isChecked = !isIndeterminate && Boolean(checked);
 
     const indeterminateAttributes = isIndeterminate
-      ? {indeterminate: 'true', 'aria-checked': 'mixed' as 'mixed'}
+      ? {indeterminate: 'true', 'aria-checked': 'mixed' as const}
       : {'aria-checked': isChecked};
 
     const iconSource = isIndeterminate ? MinusMinor : TickSmallMinor;

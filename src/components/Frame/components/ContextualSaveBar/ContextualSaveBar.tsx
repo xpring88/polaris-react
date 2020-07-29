@@ -6,14 +6,13 @@ import {Stack} from '../../../Stack';
 import {ThemeProvider} from '../../../ThemeProvider';
 import {classNames} from '../../../../utilities/css';
 import {useFeatures} from '../../../../utilities/features';
-import {ContextualSaveBarProps} from '../../../../utilities/frame';
+import type {ContextualSaveBarProps} from '../../../../utilities/frame';
 import {getWidth} from '../../../../utilities/get-width';
 import {useI18n} from '../../../../utilities/i18n';
 import {useTheme} from '../../../../utilities/theme';
 import {useToggle} from '../../../../utilities/use-toggle';
 
 import {DiscardConfirmationModal} from './components';
-
 import styles from './ContextualSaveBar.scss';
 
 export function ContextualSaveBar({
@@ -21,6 +20,7 @@ export function ContextualSaveBar({
   message,
   saveAction,
   discardAction,
+  fullWidth,
 }: ContextualSaveBarProps) {
   const i18n = useI18n();
   const {logo} = useTheme();
@@ -107,11 +107,16 @@ export function ContextualSaveBar({
     newDesignLanguage && styles.newDesignLanguage,
   );
 
+  const contentsClassName = classNames(
+    styles.Contents,
+    fullWidth && styles.fullWidth,
+  );
+
   return (
     <ThemeProvider theme={{colorScheme: 'inverse'}}>
       <div className={contexualSaveBarClassName}>
         {logoMarkup}
-        <div className={styles.Contents}>
+        <div className={contentsClassName}>
           <h2 className={styles.Message}>{message}</h2>
           <div className={styles.ActionContainer}>
             <Stack spacing="tight" wrap={false}>

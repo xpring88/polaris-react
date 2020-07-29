@@ -1,6 +1,7 @@
-import React from 'react';
-import {UniqueIdFactory} from './unique-id-factory';
+import {createContext} from 'react';
 
-export const UniqueIdFactoryContext = React.createContext<
+import type {UniqueIdFactory} from './unique-id-factory';
+
+export const UniqueIdFactoryContext = createContext<
   UniqueIdFactory | undefined
 >(undefined);

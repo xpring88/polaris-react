@@ -1,10 +1,6 @@
-import React from 'react';
+import React, {Component} from 'react';
 import debounce from 'lodash/debounce';
-import {
-  addEventListener,
-  removeEventListener,
-} from '@shopify/javascript-utilities/events';
-import {closest} from '@shopify/javascript-utilities/dom';
+
 import {classNames} from '../../utilities/css';
 import {
   StickyManager,
@@ -14,7 +10,6 @@ import {scrollable} from '../shared';
 
 import {ScrollTo} from './components';
 import {ScrollableContext} from './context';
-
 import styles from './Scrollable.scss';
 
 const MAX_SCROLL_DISTANCE = 100;
@@ -45,12 +40,11 @@ interface State {
   canScroll: boolean;
 }
 
-export class Scrollable extends React.Component<ScrollableProps, State> {
+export class Scrollable extends Component<ScrollableProps, State> {
   static ScrollTo = ScrollTo;
   static forNode(node: HTMLElement): HTMLElement | Document {
-    return (
-      (closest(node, scrollable.selector) as HTMLElement | null) || document
-    );
+    const closestElement = node.closest(scrollable.selector);
+    return closestElement instanceof HTMLElement ? closestElement : document;
   }
 
   state: State = {
@@ -77,10 +71,10 @@ export class Scrollable extends React.Component<ScrollableProps, State> {
       return;
     }
     this.stickyManager.setContainer(this.scrollArea);
-    addEventListener(this.scrollArea, 'scroll', () => {
+    this.scrollArea.addEventListener('scroll', () => {
       window.requestAnimationFrame(this.handleScroll);
     });
-    addEventListener(window, 'resize', this.handleResize);
+    window.addEventListener('resize', this.handleResize);
     window.requestAnimationFrame(() => {
       this.handleScroll();
       if (this.props.hint) {
@@ -93,8 +87,8 @@ export class Scrollable extends React.Component<ScrollableProps, State> {
     if (this.scrollArea == null) {
       return;
     }
-    removeEventListener(this.scrollArea, 'scroll', this.handleScroll);
-    removeEventListener(window, 'resize', this.handleResize);
+    this.scrollArea.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', this.handleResize);
     this.stickyManager.removeScrollListener();
   }
 
@@ -230,9 +224,9 @@ export class Scrollable extends React.Component<ScrollableProps, State> {
 
     EVENTS_TO_LOCK.forEach((eventName) => {
       if (shouldLock) {
-        addEventListener(scrollArea, eventName, prevent);
+        scrollArea.addEventListener(eventName, prevent);
       } else {
-        removeEventListener(scrollArea, eventName, prevent);
+        scrollArea.removeEventListener(eventName, prevent);
       }
     });
   }

@@ -1,13 +1,21 @@
 import tokens from '@shopify/polaris-tokens';
 import {colorFactory} from '@shopify/polaris-tokens/dist-modern';
-import {HSLColor, HSLAColor} from '../color-types';
+import {mergeConfigs} from '@shopify/polaris-tokens/dist-modern/utils';
+import {config as base} from '@shopify/polaris-tokens/dist-modern/configs/base';
+
+import type {HSLColor, HSLAColor} from '../color-types';
 import {colorToHsla, hslToString, hslToRgb} from '../color-transformers';
 import {isLight} from '../color-validation';
 import {constructColorName} from '../color-names';
 import {createLightColor} from '../color-manipulation';
-import {compose} from '../compose';
+
 import {needsVariantList} from './config';
-import {ThemeConfig, Theme, CustomPropertiesLike, ColorScheme} from './types';
+import type {
+  ThemeConfig,
+  Theme,
+  CustomPropertiesLike,
+  ColorScheme,
+} from './types';
 
 interface CustomPropertiesConfig extends ThemeConfig {
   colorScheme: ColorScheme;
@@ -18,13 +26,19 @@ export function buildCustomProperties(
   newDesignLanguage: boolean,
   tokens?: Record<string, string>,
 ): CustomPropertiesLike {
-  const {colors = {}, colorScheme} = themeConfig;
+  const {colors = {}, colorScheme, config, frameOffset = 0} = themeConfig;
+  const mergedConfig = mergeConfigs(base, config || {});
+
   return newDesignLanguage
     ? customPropertyTransformer({
-        ...colorFactory(colors, colorScheme),
+        ...colorFactory(colors, colorScheme, mergedConfig),
         ...tokens,
+        frameOffset: `${frameOffset}px`,
       })
-    : buildLegacyColors(themeConfig);
+    : {
+        ...buildLegacyColors(themeConfig),
+        ...customPropertyTransformer({frameOffset: `${frameOffset}px`}),
+      };
 }
 
 export function buildThemeContext(
@@ -95,11 +109,13 @@ export function needsVariant(name: string) {
   return needsVariantList.includes(name);
 }
 
-const lightenToString: (
+function lightenToString(
   color: HSLColor | string,
   lightness: number,
   saturation: number,
-) => string = compose(hslToString, createLightColor);
+): string {
+  return hslToString(createLightColor(color, lightness, saturation));
+}
 
 export function setTextColor(
   name: string,
@@ -110,6 +126,16 @@ export function setTextColor(
   }
 
   return [name, tokens.colorWhite];
+}
+
+export function setBorderColor(
+  name: string,
+  variant: 'light' | 'dark' = 'dark',
+): string[] {
+  if (variant === 'light') {
+    return [name, tokens.colorInkLighter];
+  }
+  return [name, tokens.colorSkyDark];
 }
 
 export function setTheme(
@@ -125,6 +151,10 @@ export function setTheme(
         setTextColor(constructColorName(baseName, null, 'color'), 'light'),
       );
 
+      colorPairs.push(
+        setBorderColor(constructColorName(baseName, null, 'border'), 'light'),
+      );
+
       colorPairs.push([
         constructColorName(baseName, key, 'lighter'),
         lightenToString(color, 7, -10),
@@ -134,6 +164,10 @@ export function setTheme(
     case 'dark':
       colorPairs.push(
         setTextColor(constructColorName(baseName, null, 'color'), 'dark'),
+      );
+
+      colorPairs.push(
+        setBorderColor(constructColorName(baseName, null, 'border'), 'dark'),
       );
 
       colorPairs.push([

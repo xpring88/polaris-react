@@ -8,6 +8,7 @@ import {
   findByTestID,
   ReactWrapper,
 } from 'test-utilities/legacy';
+import {mountWithApp} from 'test-utilities';
 
 import {Filters, FiltersProps} from '../Filters';
 import {ConnectedFilterControl} from '../components';
@@ -217,6 +218,46 @@ describe('<Filters />', () => {
       ).toHaveLength(2);
     });
 
+    it('forces showing the "More Filters" button if there are filters without shortcuts', () => {
+      const resourceFilters = mountWithAppProvider(
+        <Filters {...mockPropsWithShortcuts} />,
+      );
+
+      expect(
+        resourceFilters.find(ConnectedFilterControl).props()
+          .forceShowMorefiltersButton,
+      ).toBe(true);
+    });
+
+    it('does not force showing the "More Filters" button if all the filters have shorcuts', () => {
+      const mockPropsWithShortcuts: FiltersProps = {
+        onQueryChange: noop,
+        onQueryClear: noop,
+        onClearAll: noop,
+        filters: [
+          {
+            key: 'filterOne',
+            label: 'Filter One',
+            filter: <MockFilter id="filterOne" />,
+            shortcut: true,
+          },
+          {
+            key: 'filterTwo',
+            label: 'Filter Two',
+            filter: <MockFilter id="filterTwo" />,
+            shortcut: true,
+          },
+        ],
+      };
+      const resourceFilters = mountWithAppProvider(
+        <Filters {...mockPropsWithShortcuts} />,
+      );
+      expect(
+        resourceFilters.find(ConnectedFilterControl).props()
+          .forceShowMorefiltersButton,
+      ).toBe(false);
+    });
+
     it('receives shortcut filters with popoverOpen set to false on mount', () => {
       const resourceFilters = mountWithAppProvider(
         <Filters {...mockPropsWithShortcuts} />,
@@ -243,19 +284,9 @@ describe('<Filters />', () => {
         .first();
 
       trigger(shortcut, 'onClick');
-      expect(
-        resourceFilters
-          .find(Popover)
-          .first()
-          .props().active,
-      ).toBe(true);
+      expect(resourceFilters.find(Popover).first().props().active).toBe(true);
       trigger(shortcut, 'onClick');
-      expect(
-        resourceFilters
-          .find(Popover)
-          .first()
-          .props().active,
-      ).toBe(false);
+      expect(resourceFilters.find(Popover).first().props().active).toBe(false);
     });
 
     it('receives the expected props when there are no shortcut filters', () => {
@@ -466,6 +497,32 @@ describe('<Filters />', () => {
 
       const helpTextMarkup = findById(resourceFilters, 'FiltersHelpText');
       expect(helpTextMarkup).toHaveLength(0);
+    });
+  });
+
+  describe('newDesignLanguage', () => {
+    it('adds a newDesignLanguage class when newDesignLanguage is enabled', () => {
+      const filters = mountWithApp(<Filters {...mockProps} disabled />, {
+        features: {newDesignLanguage: true},
+      });
+
+      filters.find('button', {disabled: true})!.trigger('onClick');
+
+      expect(filters).toContainReactComponent('button', {
+        className: 'FilterTrigger newDesignLanguage',
+      });
+    });
+
+    it('does not add a newDesignLanguage class when newDesignLanguage is disabled', () => {
+      const filters = mountWithApp(<Filters {...mockProps} disabled />, {
+        features: {newDesignLanguage: false},
+      });
+
+      filters.find('button', {disabled: true})!.trigger('onClick');
+
+      expect(filters).not.toContainReactComponent('button', {
+        className: 'FilterTrigger newDesignLanguage',
+      });
     });
   });
 });

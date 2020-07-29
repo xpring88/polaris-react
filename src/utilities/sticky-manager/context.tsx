@@ -1,6 +1,7 @@
-import React from 'react';
-import {StickyManager} from './sticky-manager';
+import {createContext} from 'react';
 
-export const StickyManagerContext = React.createContext<
-  StickyManager | undefined
->(undefined);
+import type {StickyManager} from './sticky-manager';
+
+export const StickyManagerContext = createContext<StickyManager | undefined>(
+  undefined,
+);

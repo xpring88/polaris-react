@@ -50,6 +50,7 @@ async function runPa11y() {
   const setupBrowser = browsers[0].browser;
   const page = await setupBrowser.newPage();
 
+  // eslint-disable-next-line node/no-path-concat
   const iframePath = `file://${__dirname}/../build/storybook/static/iframe.html`;
 
   const stories = await page
@@ -112,16 +113,16 @@ async function runPa11y() {
 
   const results = rawResults.filter((result) => result.issues.length);
 
-  console.log(
-    `
+  if (results.length) {
+    console.log(
+      `
 
 ========================================================================
 The following issues were discovered and need to be fixed before this code can be merged
 ========================================================================
 `,
-  );
+    );
 
-  if (results.length) {
     results.forEach((result) => {
       console.log(
         '------------------------------------------------------------------------',
@@ -133,7 +134,14 @@ The following issues were discovered and need to be fixed before this code can b
       console.log(JSON.stringify(result.issues, null, 2));
     });
   } else {
-    console.log('No issues!');
+    console.log(
+      `
+
+========================================================================
+No issues were discovered!
+========================================================================
+`,
+    );
   }
 
   if (results.length) {

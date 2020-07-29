@@ -1,4 +1,5 @@
-import React from 'react';
-import {I18n} from './I18n';
+import {createContext} from 'react';
 
-export const I18nContext = React.createContext<I18n | undefined>(undefined);
+import type {I18n} from './I18n';
+
+export const I18nContext = createContext<I18n | undefined>(undefined);

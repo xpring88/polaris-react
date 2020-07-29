@@ -18,7 +18,8 @@
         "success": "Onnistui",
         "warning": "Varoitus",
         "attention": "Huomio",
-        "new": "Uusi"
+        "new": "Uusi",
+        "critical": "Kriittinen"
       }
     },
     "Button": {
@@ -71,6 +72,15 @@
         "friday": "Pe",
         "saturday": "La",
         "sunday": "Su"
+      },
+      "days": {
+        "monday": "Maanantai",
+        "tuesday": "Tiistai",
+        "wednesday": "Keskiviikko",
+        "thursday": "Torstai",
+        "friday": "Perjantai",
+        "saturday": "Lauantai",
+        "sunday": "Sunnuntai"
       }
     },
     "DiscardConfirmationModal": {
@@ -153,7 +163,7 @@
       "ariaLivePlural": "{itemsLength} tuotteet",
       "Item": {
         "actionsDropdownLabel": "Kohdetta {accessibilityLabel} koskevat toimenpiteet",
-        "actionsDropdown": "Toiminnat-alasvetovalikko",
+        "actionsDropdown": "Toiminnat-pudotusvalikko",
         "viewItem": "Näytä tiedot kohteesta {itemName}"
       },
       "BulkActions": {
@@ -226,6 +236,57 @@
       "SearchField": {
         "clearButtonLabel": "Tyhjennä",
         "search": "Hae"
+      }
+    },
+    "MediaCard": {
+      "popoverButton": "Toiminnat"
+    },
+    "VideoThumbnail": {
+      "playButtonA11yLabel": {
+        "default": "Toista video",
+        "defaultWithDuration": "Toista video, joka on kestoltaan {duration}",
+        "duration": {
+          "hours": {
+            "other": {
+              "only": "{hourCount} tuntia",
+              "andMinutes": "{hourCount} tuntia ja {minuteCount} minuuttia",
+              "andMinute": "{hourCount} tuntia ja {minuteCount} minuutti",
+              "minutesAndSeconds": "{hourCount} tuntia, {minuteCount} minuuttia ja {secondCount} sekuntia",
+              "minutesAndSecond": "{hourCount} tuntia, {minuteCount} minuuttia ja {secondCount} sekunti",
+              "minuteAndSeconds": "{hourCount} tuntia, {minuteCount} minuutti ja {secondCount} sekuntia",
+              "minuteAndSecond": "{hourCount} tuntia, {minuteCount} minuutti ja {secondCount} sekunti",
+              "andSeconds": "{hourCount} tuntia ja {secondCount} sekuntia",
+              "andSecond": "{hourCount} tuntia ja {secondCount} sekunti"
+            },
+            "one": {
+              "only": "{hourCount} tunti",
+              "andMinutes": "{hourCount} tunti ja {minuteCount} minuuttia",
+              "andMinute": "{hourCount} tunti ja {minuteCount} minuutti",
+              "minutesAndSeconds": "{hourCount} tunti, {minuteCount} minuuttia ja {secondCount} sekuntia",
+              "minutesAndSecond": "{hourCount} tunti, {minuteCount} minuuttia ja {secondCount} sekunti",
+              "minuteAndSeconds": "{hourCount} tunti, {minuteCount} minuutti ja {secondCount} sekuntia",
+              "minuteAndSecond": "{hourCount} tunti, {minuteCount} minuutti ja {secondCount} sekunti",
+              "andSeconds": "{hourCount} tunti ja {secondCount} sekuntia",
+              "andSecond": "{hourCount} tunti ja {secondCount} sekunti"
+            }
+          },
+          "minutes": {
+            "other": {
+              "only": "{minuteCount} minuuttia",
+              "andSeconds": "{minuteCount} minuuttia ja {secondCount} sekuntia",
+              "andSecond": "{minuteCount} minuuttia ja {secondCount} sekunti"
+            },
+            "one": {
+              "only": "{minuteCount} minuutti",
+              "andSeconds": "{minuteCount} minuutti ja {secondCount} sekuntia",
+              "andSecond": "{minuteCount} minuutti ja {secondCount} sekunti"
+            }
+          },
+          "seconds": {
+            "other": "{secondCount} sekuntia",
+            "one": "{secondCount} sekunti"
+          }
+        }
       }
     }
   }

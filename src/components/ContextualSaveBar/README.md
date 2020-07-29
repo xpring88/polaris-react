@@ -9,6 +9,7 @@ keywords:
   - save
   - cancel
   - logo
+omitAppProvider: true
 ---
 
 # Contextual Save Bar
@@ -20,12 +21,6 @@ The contextual save bar tells merchants their options once they have made change
 ## Required components
 
 The contextual save bar component must be wrapped in the [frame](https://polaris.shopify.com/components/structure/frame) component.
-
----
-
-## Use in an embedded application
-
-To use the contextual save bar component in an embedded application, you must use App Bridge (version 1.6.0 and up) directly. See the [documentation](https://help.shopify.com/en/api/embedded-apps/app-bridge/actions/contextualSaveBar) for more information.
 
 ---
 
@@ -212,10 +207,54 @@ repurpose that space to extend the message contents fully to the left side of th
 </div>
 ```
 
+### Contextual save bar full width
+
+Use the fullWidth flag when you want to remove the default max-width set on the contextual save bar.
+
+```jsx
+<div style={{height: '250px'}}>
+  <AppProvider
+    theme={{
+      logo: {
+        width: 124,
+        contextualSaveBarSource:
+          'https://cdn.shopify.com/s/files/1/0446/6937/files/jaded-pixel-logo-gray.svg?6215648040070010999',
+      },
+    }}
+    i18n={{
+      Polaris: {
+        Frame: {
+          skipToContent: 'Skip to content',
+        },
+        ContextualSaveBar: {
+          save: 'Save',
+          discard: 'Discard',
+        },
+      },
+    }}
+  >
+    <Frame>
+      <ContextualSaveBar
+        fullWidth
+        message="Unsaved changes"
+        saveAction={{
+          onAction: () => console.log('add form submit logic'),
+          loading: false,
+          disabled: false,
+        }}
+        discardAction={{
+          onAction: () => console.log('add clear form logic'),
+        }}
+      />
+    </Frame>
+  </AppProvider>
+</div>
+```
+
 ---
 
 ## Related components
 
-- To wrap your entire application, [use the frame component](https://polaris.shopify.com/components/structure//frame)
+- To wrap your entire application, [use the frame component](https://polaris.shopify.com/components/structure/frame)
 - To build the outer wrapper of a page, including page title and associated actions, [use the page component](https://polaris.shopify.com/components/structure/page)
 - To wrap form elements and handle the submission of a form, [use the form component](https://polaris.shopify.com/components/forms/form)

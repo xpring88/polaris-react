@@ -1,15 +1,15 @@
 import React from 'react';
 // eslint-disable-next-line no-restricted-imports
-import {mountWithAppProvider, ReactWrapper} from 'test-utilities/legacy';
-import {TextContainer} from 'components';
+import {
+  mountWithAppProvider,
+  ReactWrapper,
+  trigger,
+} from 'test-utilities/legacy';
+import {TextContainer, TextField, EventListener} from 'components';
+
 import {Key} from '../../../../../types';
 import {PositionedOverlay} from '../../../../PositionedOverlay';
 import {PopoverOverlay} from '../PopoverOverlay';
-
-jest.mock('@shopify/javascript-utilities/fastdom', () => ({
-  ...require.requireActual('@shopify/javascript-utilities/fastdom'),
-  write: jest.fn((callback) => callback()),
-}));
 
 interface HandlerMap {
   [eventName: string]: (event: any) => void;
@@ -21,6 +21,8 @@ describe('<PopoverOverlay />', () => {
   let addEventListener: jest.SpyInstance;
   let removeEventListener: jest.SpyInstance;
 
+  let rafSpy: jest.SpyInstance;
+
   beforeEach(() => {
     addEventListener = jest.spyOn(document, 'addEventListener');
     addEventListener.mockImplementation((event, callback) => {
@@ -31,6 +33,9 @@ describe('<PopoverOverlay />', () => {
     removeEventListener.mockImplementation((event) => {
       listenerMap[event] = noop;
     });
+
+    rafSpy = jest.spyOn(window, 'requestAnimationFrame');
+    rafSpy.mockImplementation((callback) => callback());
   });
 
   afterEach(() => {
@@ -40,6 +45,8 @@ describe('<PopoverOverlay />', () => {
 
     addEventListener.mockRestore();
     removeEventListener.mockRestore();
+
+    rafSpy.mockRestore();
   });
 
   const activator = document.createElement('button');
@@ -143,6 +150,25 @@ describe('<PopoverOverlay />', () => {
     ).toBe('center');
   });
 
+  it('passes preferInputActivator to PositionedOverlay when false', () => {
+    const popoverOverlay = mountWithAppProvider(
+      <PopoverOverlay
+        active
+        id="PopoverOverlay-1"
+        activator={activator}
+        onClose={noop}
+        fixed
+        preferInputActivator={false}
+      >
+        {children}
+      </PopoverOverlay>,
+    );
+
+    expect(
+      popoverOverlay.find(PositionedOverlay).prop('preferInputActivator'),
+    ).toBe(false);
+  });
+
   it('calls the onClose callback when the escape key is pressed', () => {
     const spy = jest.fn();
 
@@ -159,6 +185,69 @@ describe('<PopoverOverlay />', () => {
 
     listenerMap.keyup({keyCode: Key.Escape});
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not call the onClose callback when a descendent HTMLElement is clicked', () => {
+    const spy = jest.fn();
+
+    const popoverOverlay = mountWithAppProvider(
+      <PopoverOverlay
+        active
+        id="PopoverOverlay-1"
+        activator={activator}
+        onClose={spy}
+      >
+        (<TextField label="Store name" value="Click me" onChange={() => {}} />)
+      </PopoverOverlay>,
+    );
+
+    const target = popoverOverlay.find(TextField).find('input').getDOMNode();
+
+    const clickEventListener = popoverOverlay
+      .find(EventListener)
+      .findWhere((node) => node.prop('event') === 'click');
+
+    trigger(clickEventListener, 'handler', {target});
+
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('does not call the onClose callback when a descendent SVGElement is clicked', () => {
+    const spy = jest.fn();
+
+    const popoverOverlay = mountWithAppProvider(
+      <PopoverOverlay
+        active
+        id="PopoverOverlay-1"
+        activator={activator}
+        onClose={spy}
+      >
+        (
+        <TextField
+          type="number"
+          label="Store name"
+          value="Click me"
+          onChange={() => {}}
+        />
+        )
+      </PopoverOverlay>,
+    );
+
+    const target = popoverOverlay
+      .find(TextField)
+      .find('svg')
+      .first()
+      .getDOMNode();
+
+    const clickEventListener = popoverOverlay
+      .find(EventListener)
+      .findWhere((node) => node.prop('event') === 'click');
+
+    trigger(clickEventListener, 'handler', {
+      target,
+    });
+
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it('starts animating in immediately', () => {

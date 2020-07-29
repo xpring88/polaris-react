@@ -1,6 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import debounce from 'lodash/debounce';
 import {MobileHamburgerMajorMonotone} from '@shopify/polaris-icons';
+
 import {classNames} from '../../utilities/css';
 import {getWidth} from '../../utilities/get-width';
 import {useI18n} from '../../utilities/i18n';
@@ -12,19 +13,11 @@ import {Icon} from '../Icon';
 import {Image} from '../Image';
 import {UnstyledLink} from '../UnstyledLink';
 
-import {
-  SearchField,
-  SearchFieldProps,
-  UserMenu,
-  UserMenuProps,
-  Search,
-  SearchProps,
-  Menu,
-} from './components';
-
+import {SearchField, UserMenu, Search, Menu} from './components';
+import type {SearchFieldProps, UserMenuProps, SearchProps} from './components';
 import styles from './TopBar.scss';
 
-export {UserMenuProps, SearchFieldProps};
+export type {UserMenuProps, SearchFieldProps};
 
 export interface TopBarProps {
   /** Toggles whether or not a navigation component has been provided. Controls the presence of the mobile nav toggle button */
@@ -81,6 +74,7 @@ export const TopBar: React.FunctionComponent<TopBarProps> & {
     setFalse: forceFalseFocused,
   } = useToggle(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleScroll = useCallback(
     debounce(() => {
       const scrollDistance = window.scrollY;
@@ -142,7 +136,7 @@ export const TopBar: React.FunctionComponent<TopBarProps> & {
   }
 
   const searchMarkup = searchField ? (
-    <React.Fragment>
+    <>
       {searchField}
       <Search
         visible={searchResultsVisible}
@@ -151,7 +145,7 @@ export const TopBar: React.FunctionComponent<TopBarProps> & {
       >
         {searchResults}
       </Search>
-    </React.Fragment>
+    </>
   ) : null;
 
   const scrollListenerMarkup = newDesignLanguage ? (

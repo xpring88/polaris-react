@@ -1,36 +1,35 @@
 import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {ArrowLeftMinor, ArrowRightMinor} from '@shopify/polaris-icons';
+
+import {Button} from '../Button';
+import {classNames} from '../../utilities/css';
 import {
-  Range,
-  Months,
-  Year,
   isDateAfter,
   isDateBefore,
   getNextDisplayYear,
   getNextDisplayMonth,
   getPreviousDisplayYear,
   getPreviousDisplayMonth,
-  Weekdays,
-} from '@shopify/javascript-utilities/dates';
-
-import {Button} from '../Button';
+} from '../../utilities/dates';
+import type {Range} from '../../utilities/dates';
 import {useI18n} from '../../utilities/i18n';
-import {monthName} from './utilities';
+import {useFeatures} from '../../utilities/features';
 
+import {monthName} from './utilities';
 import {Month} from './components';
 import styles from './DatePicker.scss';
 
-export {Range, Months, Year};
+export type {Range};
 
 export interface DatePickerProps {
   /** ID for the element */
   id?: string;
   /** The selected date or range of dates */
   selected?: Date | Range;
-  /** The month to show */
-  month: Months;
+  /** The month to show, from 0 to 11. 0 is January, 1 is February ... 11 is December */
+  month: number;
   /** The year to show */
-  year: Year;
+  year: number;
   /** Allow a range of dates to be selected */
   allowRange?: boolean;
   /** Disable selecting dates before this. */
@@ -39,12 +38,15 @@ export interface DatePickerProps {
   disableDatesAfter?: Date;
   /** The selection can span multiple months */
   multiMonth?: boolean;
-  /** First day of week. Sunday by default */
-  weekStartsOn?: Weekdays;
+  /**
+   * First day of week, from 0 to 6. 0 is Sunday, 1 is Monday ... 6 is Saturday
+   * @default 0
+   */
+  weekStartsOn?: number;
   /** Callback when date is selected. */
   onChange?(date: Range): void;
   /** Callback when month is changed. */
-  onMonthChange?(month: Months, year: Year): void;
+  onMonthChange?(month: number, year: number): void;
 }
 
 export function DatePicker({
@@ -56,11 +58,12 @@ export function DatePicker({
   multiMonth,
   disableDatesBefore,
   disableDatesAfter,
-  weekStartsOn = Weekdays.Sunday,
+  weekStartsOn = 0,
   onMonthChange,
   onChange = noop,
 }: DatePickerProps) {
   const i18n = useI18n();
+  const {newDesignLanguage} = useFeatures();
   const [hoverDate, setHoverDate] = useState<Date | undefined>(undefined);
   const [focusDate, setFocusDate] = useState<Date | undefined>(undefined);
 
@@ -95,7 +98,7 @@ export function DatePicker({
   );
 
   const handleMonthChangeClick = useCallback(
-    (month: Months, year: Year) => {
+    (month: number, year: number) => {
       if (!onMonthChange) {
         return;
       }
@@ -205,10 +208,15 @@ export function DatePicker({
     />
   ) : null;
 
+  const datePickerClassName = classNames(
+    styles.DatePicker,
+    newDesignLanguage && styles.newDesignLanguage,
+  );
+
   return (
     <div
       id={id}
-      className={styles.DatePicker}
+      className={datePickerClassName}
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
     >

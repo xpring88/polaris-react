@@ -1,6 +1,5 @@
-import React from 'react';
-import {Features} from './types';
+import {createContext} from 'react';
 
-export const FeaturesContext = React.createContext<Features | undefined>(
-  undefined,
-);
+import type {Features} from './types';
+
+export const FeaturesContext = createContext<Features | undefined>(undefined);

@@ -1,9 +1,10 @@
 import React from 'react';
-import {Transition, CSSTransition} from '@material-ui/react-transition-group';
+import {Transition, CSSTransition} from 'react-transition-group';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider, findByTestID} from 'test-utilities/legacy';
 import {mountWithApp} from 'test-utilities';
 import {Popover} from 'components';
+
 import {CheckableButton} from '../../CheckableButton';
 import {BulkActionButton, BulkActionButtonProps} from '../components';
 import {BulkActions, BulkActionsProps} from '../BulkActions';
@@ -49,7 +50,7 @@ function searchCheckableButton(
 
 describe('<BulkActions />', () => {
   describe('actions', () => {
-    it('promotedActions render in the last position on intial load', () => {
+    it('promotedActions render in the last position on initial load', () => {
       const {promotedActions} = bulkActionProps;
       const bulkActions = mountWithAppProvider(
         <BulkActions {...bulkActionProps} promotedActions={promotedActions} />,

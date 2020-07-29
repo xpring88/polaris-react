@@ -68,7 +68,7 @@ We’ll review your pull request and either merge it, request changes to it, or 
 1. Run `yarn` in the repository root
 1. If you’ve fixed a bug or added code that [should be tested](https://github.com/Shopify/web-foundation/blob/master/Best%20practices/Testing.md), add tests
 1. Ensure the test suite passes with `yarn test` (protip: `yarn test:watch TestName` is helpful in development)
-1. If your pull request modifies any SVG files run `yarn optimize`
+1. If your pull request modifies any SVG files run `yarn run sewing-kit optimize`
 1. Format your code with `yarn format`
 1. Make sure your code lints with `yarn lint`
 1. Run the TypeScript compiler with `yarn type-check`
@@ -85,7 +85,7 @@ Each contributor is required to [sign a CLA](https://cla.shopify.com/). This pro
 
 ### Best practices
 
-Take a look at [our best practices](https://github.com/Shopify/web-foundation/tree/master/Best%20practices) which include [testing](https://github.com/Shopify/web-foundation/blob/master/Best%20practices/Testing.md), [React testing](https://github.com/Shopify/web-foundation/blob/master/Best%20practices/React/Testing.md), [Jest](https://github.com/Shopify/web-foundation/blob/master/Best%20practices/Jest.md), and [Enzyme](https://github.com/Shopify/web-foundation/blob/master/Best%20practices/Enzyme.md). We will continue to add best practices here.
+Take a look at [our best practices](https://github.com/Shopify/web-foundation/tree/master/handbook/Best%20practices) which include [testing](https://github.com/Shopify/web-foundation/blob/master/handbook/Best%20practices/Testing.md), [React testing](https://github.com/Shopify/web-foundation/blob/master/handbook/Best%20practices/React/Testing.md), [Jest](https://github.com/Shopify/web-foundation/blob/master/handbook/Best%20practices/Jest.md), and [Enzyme](https://github.com/Shopify/web-foundation/blob/master/handbook/Best%20practices/Enzyme.md). We will continue to add best practices here.
 
 ### Development workflow
 

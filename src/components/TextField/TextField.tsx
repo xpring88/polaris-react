@@ -1,6 +1,12 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {addEventListener} from '@shopify/javascript-utilities/events';
+import React, {
+  createElement,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import {CircleCancelMinor} from '@shopify/polaris-icons';
+
 import {VisuallyHidden} from '../VisuallyHidden';
 import {classNames, variationName} from '../../utilities/css';
 import {useFeatures} from '../../utilities/features';
@@ -9,9 +15,9 @@ import {useUniqueId} from '../../utilities/unique-id';
 import {useIsAfterInitialMount} from '../../utilities/use-is-after-initial-mount';
 import {Labelled, LabelledProps, helpTextID, labelID} from '../Labelled';
 import {Connected} from '../Connected';
-
 import {Error, Key} from '../../types';
 import {Icon} from '../Icon';
+
 import {Resizer, Spinner} from './components';
 import styles from './TextField.scss';
 
@@ -313,7 +319,7 @@ export function TextField({
 
       buttonPressTimer.current = window.setTimeout(onChangeInterval, interval);
 
-      addEventListener(document, 'mouseup', handleButtonRelease, {
+      document.addEventListener('mouseup', handleButtonRelease, {
         once: true,
       });
     },
@@ -375,7 +381,7 @@ export function TextField({
     clearButton && styles['Input-hasClearButton'],
   );
 
-  const input = React.createElement(multiline ? 'textarea' : 'input', {
+  const input = createElement(multiline ? 'textarea' : 'input', {
     name,
     id,
     disabled,
@@ -490,9 +496,7 @@ export function TextField({
 }
 
 function normalizeAutoComplete(autoComplete?: boolean | string) {
-  if (autoComplete == null) {
-    return autoComplete;
-  } else if (autoComplete === true) {
+  if (autoComplete === true) {
     return 'on';
   } else if (autoComplete === false) {
     return 'off';

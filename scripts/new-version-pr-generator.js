@@ -2,12 +2,14 @@
 const {execSync} = require('child_process');
 const {readFileSync} = require('fs');
 const path = require('path');
+
 const {mkdir} = require('shelljs');
 const yaml = require('js-yaml');
 const semver = require('semver');
 
 const {version: PACKAGE_VERSION} = require('../package.json');
 const secrets = require('../secrets.json');
+
 const retry = require('./utilities/retry');
 
 const repositories = ['polaris-styleguide', 'web'];
@@ -137,6 +139,7 @@ const jobs = repositories.map((repository) => {
           'v',
           '',
         )} --no-progress --ignore-engines`,
+        'npx yarn-deduplicate --packages @shopify/polaris-icons,@shopify/polaris-tokens yarn.lock',
         `git add package.json yarn.lock`,
         `${shopifyPolarisBotGitOverride} git commit -m "Update @shopify/polaris to ${releaseVersion}" --author "${polarisBotName} <${polarisBotEmail}>" -m "${releaseVersion}" --allow-empty`,
         `git push origin update-polaris-${releaseVersion}`,
@@ -145,7 +148,7 @@ const jobs = repositories.map((repository) => {
           body: pullRequestTemplate(repository, releaseVersion),
           head: `update-polaris-${releaseVersion}`,
           base: baseBranch,
-        })}' -X POST https://api.github.com/repos/shopify/${repository}/pulls?access_token=${polarisBotToken}`,
+        })}' -H 'Authorization: token ${polarisBotToken}' -X POST https://api.github.com/repos/shopify/${repository}/pulls`,
       ];
 
       for (const command of commands) {

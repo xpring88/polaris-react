@@ -19,7 +19,18 @@ addParameters({
 });
 
 addDecorator(function PaddingDecorator(story) {
-  return <div style={{padding: '8px'}}>{story()}</div>;
+  const storyProps = story().props;
+  const containsFrame =
+    storyProps &&
+    (storyProps.hasOwnProperty('topBar') ||
+      storyProps.hasOwnProperty('navigation') ||
+      storyProps.hasOwnProperty('data-has-frame'));
+
+  return containsFrame ? (
+    story()
+  ) : (
+    <div style={{padding: '8px'}}>{story()}</div>
+  );
 });
 
 function StrictModeToggle({isStrict = false, children}) {
@@ -28,6 +39,16 @@ function StrictModeToggle({isStrict = false, children}) {
 }
 
 function AppProviderWithKnobs({newDesignLanguage, colorScheme, children}) {
+  const omitAppProvider = (() => {
+    try {
+      return children.props.children.props['data-omit-app-provider'];
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  if (omitAppProvider === 'true') return children;
+
   const colors = Object.entries(DefaultThemeColors).reduce(
     (accumulator, [key, value]) => ({
       ...accumulator,
@@ -83,20 +104,6 @@ addDecorator(
 );
 
 addDecorator(withKnobs);
-
-// addon-console
-setConsoleOptions((opts) => {
-  // When transpiling TS using isolatedModules, the compiler doesn't strip
-  // out exported types as it doesn't know if an item is a type or not.
-  // Ignore those warnings as we don't care about them.
-  // ignore color because the addon doesn't handle colored logs properly
-  opts.panelExclude = [
-    ...opts.panelExclude,
-    /export .* was not found in/,
-    /color: #999933;/,
-  ];
-  return opts;
-});
 
 function strToHex(str) {
   if (str.charAt(0) === '#') return str;

@@ -1,7 +1,8 @@
-import React from 'react';
+import {createContext} from 'react';
 
-import {CheckboxHandles} from '../../types';
-import {ResourceListSelectedItems, CheckableButtonKey} from './types';
+import type {CheckboxHandles} from '../../types';
+
+import type {ResourceListSelectedItems, CheckableButtonKey} from './types';
 
 // This is internal, but TS throws a build-time error if we don't export it
 export interface ResourceListContextType {
@@ -25,6 +26,4 @@ export interface ResourceListContextType {
   ): void;
 }
 
-export const ResourceListContext = React.createContext<ResourceListContextType>(
-  {},
-);
+export const ResourceListContext = createContext<ResourceListContextType>({});

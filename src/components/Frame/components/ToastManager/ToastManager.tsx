@@ -1,12 +1,10 @@
 import React, {createRef, memo} from 'react';
-import {
-  TransitionGroup,
-  CSSTransition,
-} from '@material-ui/react-transition-group';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
+
 import {classNames} from '../../../../utilities/css';
 import {EventListener} from '../../../EventListener';
 import {Portal} from '../../../Portal';
-import {ToastPropsWithID} from '../../../../utilities/frame';
+import type {ToastPropsWithID} from '../../../../utilities/frame';
 import {Toast} from '../Toast';
 import {useDeepEffect} from '../../../../utilities/use-deep-effect';
 import {useDeepCallback} from '../../../../utilities/use-deep-callback';
@@ -41,6 +39,7 @@ export const ToastManager = memo(function ToastManager({
 
   useDeepEffect(() => {
     updateToasts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastMessages]);
 
   const toastsMarkup = toastMessages.map((toast, index) => {
@@ -49,7 +48,7 @@ export const ToastManager = memo(function ToastManager({
 
     return (
       <CSSTransition
-        findDOMNode={findDOMNode(index)}
+        nodeRef={toastNodes[index]}
         key={toast.id}
         timeout={{enter: 0, exit: 400}}
         classNames={toastClasses}
@@ -69,10 +68,6 @@ export const ToastManager = memo(function ToastManager({
       </div>
     </Portal>
   );
-
-  function findDOMNode(index: number) {
-    return () => toastNodes[index].current;
-  }
 });
 
 const toastClasses = {

@@ -1,15 +1,20 @@
 import React, {
+  Children,
   useRef,
   useEffect,
   useCallback,
   useState,
   AriaAttributes,
 } from 'react';
-import {findFirstFocusableNode} from '@shopify/javascript-utilities/focus';
-import {focusNextFocusableNode} from '../../utilities/focus';
+
+import {
+  findFirstFocusableNodeIncludingDisabled,
+  focusNextFocusableNode,
+} from '../../utilities/focus';
 import {Portal} from '../Portal';
 import {portal} from '../shared';
 import {useUniqueId} from '../../utilities/unique-id';
+
 import {
   PopoverCloseSource,
   Pane,
@@ -32,6 +37,11 @@ export interface PopoverProps {
   active: boolean;
   /** The element to activate the Popover */
   activator: React.ReactElement;
+  /**
+   * Use the activator's input element to calculate the Popover position
+   * @default true
+   */
+  preferInputActivator?: PopoverOverlayProps['preferInputActivator'];
   /**
    * The element type to wrap the activator with
    * @default 'div'
@@ -71,9 +81,10 @@ export const Popover: React.FunctionComponent<PopoverProps> & {
   active,
   fixed,
   ariaHaspopup,
+  preferInputActivator = true,
   ...rest
 }: PopoverProps) {
-  const [activatorNode, setActivatorNode] = useState();
+  const [activatorNode, setActivatorNode] = useState<HTMLElement>();
   const activatorContainer = useRef<HTMLElement>(null);
   const WrapperComponent: any = activatorWrapper;
   const id = useUniqueId('popover');
@@ -83,10 +94,23 @@ export const Popover: React.FunctionComponent<PopoverProps> & {
       return;
     }
 
-    const firstFocusable = findFirstFocusableNode(activatorContainer.current);
-    const focusableActivator = firstFocusable || activatorContainer.current;
-    setActivatorAttributes(focusableActivator, {id, active, ariaHaspopup});
-  }, [active, ariaHaspopup, id]);
+    const firstFocusable = findFirstFocusableNodeIncludingDisabled(
+      activatorContainer.current,
+    );
+    const focusableActivator: HTMLElement & {
+      disabled?: boolean;
+    } = firstFocusable || activatorContainer.current;
+
+    const activatorDisabled =
+      'disabled' in focusableActivator && Boolean(focusableActivator.disabled);
+
+    setActivatorAttributes(focusableActivator, {
+      id,
+      active,
+      ariaHaspopup,
+      activatorDisabled,
+    });
+  }, [id, active, ariaHaspopup]);
 
   const handleClose = (source: PopoverCloseSource) => {
     onClose(source);
@@ -101,8 +125,8 @@ export const Popover: React.FunctionComponent<PopoverProps> & {
       activatorNode
     ) {
       const focusableActivator =
-        findFirstFocusableNode(activatorNode) ||
-        findFirstFocusableNode(activatorContainer.current) ||
+        findFirstFocusableNodeIncludingDisabled(activatorNode) ||
+        findFirstFocusableNodeIncludingDisabled(activatorContainer.current) ||
         activatorContainer.current;
       if (!focusNextFocusableNode(focusableActivator, isInPortal)) {
         focusableActivator.focus();
@@ -112,30 +136,36 @@ export const Popover: React.FunctionComponent<PopoverProps> & {
 
   useEffect(() => {
     if (!activatorNode && activatorContainer.current) {
-      setActivatorNode(activatorContainer.current.firstElementChild);
+      setActivatorNode(
+        activatorContainer.current.firstElementChild as HTMLElement,
+      );
     } else if (
       activatorNode &&
       activatorContainer.current &&
       !activatorContainer.current.contains(activatorNode)
     ) {
-      setActivatorNode(activatorContainer.current.firstElementChild);
+      setActivatorNode(
+        activatorContainer.current.firstElementChild as HTMLElement,
+      );
     }
     setAccessibilityAttributes();
   }, [activatorNode, setAccessibilityAttributes]);
 
   useEffect(() => {
     if (activatorNode && activatorContainer.current) {
-      setActivatorNode(activatorContainer.current.firstElementChild);
+      setActivatorNode(
+        activatorContainer.current.firstElementChild as HTMLElement,
+      );
     }
     setAccessibilityAttributes();
   }, [activatorNode, setAccessibilityAttributes]);
 
   const portal = activatorNode ? (
-    <Portal idPrefix="popover" testID="portal">
+    <Portal idPrefix="popover">
       <PopoverOverlay
-        testID="popoverOverlay"
         id={id}
         activator={activatorNode}
+        preferInputActivator={preferInputActivator}
         onClose={handleClose}
         active={active}
         fixed={fixed}
@@ -148,7 +178,7 @@ export const Popover: React.FunctionComponent<PopoverProps> & {
 
   return (
     <WrapperComponent ref={activatorContainer}>
-      {React.Children.only(activator)}
+      {Children.only(activator)}
       {portal}
     </WrapperComponent>
   );

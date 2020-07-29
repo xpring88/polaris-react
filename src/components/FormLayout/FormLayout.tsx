@@ -1,4 +1,5 @@
-import React, {memo, NamedExoticComponent} from 'react';
+import React, {memo, Children, NamedExoticComponent} from 'react';
+
 import {wrapWithComponent, isElementOfType} from '../../utilities/components';
 
 import {Group, Item} from './components';
@@ -14,7 +15,7 @@ export const FormLayout = memo(function FormLayout({
 }: FormLayoutProps) {
   return (
     <div className={styles.FormLayout}>
-      {React.Children.map(children, wrapChildren)}
+      {Children.map(children, wrapChildren)}
     </div>
   );
 }) as NamedExoticComponent<FormLayoutProps> & {

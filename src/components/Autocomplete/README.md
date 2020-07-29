@@ -191,9 +191,7 @@ function MultiAutocompleteExample() {
     return string
       .toLowerCase()
       .split(' ')
-      .map(function(word) {
-        return word.replace(word[0], word[0].toUpperCase());
-      })
+      .map((word) => word.replace(word[0], word[0].toUpperCase()))
       .join('');
   }
 }
@@ -456,12 +454,12 @@ function AutocompleteExample() {
   );
 
   const emptyState = (
-    <React.Fragment>
+    <>
       <Icon source={SearchMinor} />
       <div style={{textAlign: 'center'}}>
         <TextContainer>Could not find any results</TextContainer>
       </div>
-    </React.Fragment>
+    </>
   );
 
   return (

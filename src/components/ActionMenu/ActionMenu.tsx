@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
+
 import {classNames} from '../../utilities/css';
-import {
+import type {
   ActionListSection,
   MenuActionDescriptor,
   MenuGroupDescriptor,
 } from '../../types';
+import {FeaturesContext} from '../../utilities/features';
+import {Button} from '../Button';
+import {ButtonGroup} from '../ButtonGroup';
 
 import {sortAndOverrideActionOrder} from './utilities';
 import {MenuAction, MenuGroup, RollupActions} from './components';
-
 import styles from './ActionMenu.scss';
 
 export interface ActionMenuProps {
@@ -24,7 +27,10 @@ interface State {
   activeMenuGroup?: string;
 }
 
-export class ActionMenu extends React.PureComponent<ActionMenuProps, State> {
+export class ActionMenu extends PureComponent<ActionMenuProps, State> {
+  static contextType = FeaturesContext;
+  context!: React.ContextType<typeof FeaturesContext>;
+
   state: State = {
     activeMenuGroup: undefined,
   };
@@ -54,7 +60,9 @@ export class ActionMenu extends React.PureComponent<ActionMenuProps, State> {
     );
   }
 
+  // eslint-disable-next-line @shopify/react-no-multiple-render-methods
   private renderActions = () => {
+    const {newDesignLanguage} = this.context || {};
     const {actions = [], groups = []} = this.props;
     const {activeMenuGroup} = this.state;
     const menuActions = [...actions, ...groups];
@@ -78,13 +86,30 @@ export class ActionMenu extends React.PureComponent<ActionMenuProps, State> {
         ) : null;
       }
 
-      const {content, ...rest} = action;
-      return (
-        <MenuAction key={`MenuAction-${index}`} content={content} {...rest} />
+      const {content, onAction, ...rest} = action;
+      return newDesignLanguage ? (
+        <Button key={index} onClick={onAction} {...rest}>
+          {content}
+        </Button>
+      ) : (
+        <MenuAction
+          key={`MenuAction-${index}`}
+          content={content}
+          onAction={onAction}
+          {...rest}
+        />
       );
     });
 
-    return <div className={styles.ActionsLayout}>{actionMarkup}</div>;
+    return (
+      <div className={styles.ActionsLayout}>
+        {newDesignLanguage ? (
+          <ButtonGroup>{actionMarkup}</ButtonGroup>
+        ) : (
+          actionMarkup
+        )}
+      </div>
+    );
   };
 
   private handleMenuGroupToggle = (group: string) => {

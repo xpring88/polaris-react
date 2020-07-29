@@ -1,9 +1,9 @@
 import {mount, ReactWrapper, CommonWrapper} from 'enzyme';
-import React from 'react';
+import type {ReactElement} from 'react';
 import {act} from 'react-dom/test-utils';
+
 import {get} from '../utilities/get';
 import translations from '../../locales/en.json';
-
 import {
   PolarisTestProvider,
   WithPolarisTestProviderOptions,
@@ -49,7 +49,7 @@ export function trigger(wrapper: AnyWrapper, keypath: string, ...args: any[]) {
   let returnValue: any;
 
   const promise = reactAct(() => {
-    // eslint-disable-next-line callback-return
+    // eslint-disable-next-line node/callback-return, node/no-callback-literal
     returnValue = callback(...args);
 
     // The return type of non-async `act()`, DebugPromiseLike, contains a `then` method
@@ -83,7 +83,7 @@ function updateRoot(wrapper: AnyWrapper) {
 }
 
 export function mountWithAppProvider<P>(
-  node: React.ReactElement<P>,
+  node: ReactElement<P>,
   context: WithPolarisTestProviderOptions = {},
 ) {
   return mount<P>(node, {

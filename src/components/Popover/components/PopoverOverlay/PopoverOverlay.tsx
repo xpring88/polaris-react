@@ -1,6 +1,4 @@
-import React, {createRef} from 'react';
-import {nodeContainsDescendant} from '@shopify/javascript-utilities/dom';
-import {write} from '@shopify/javascript-utilities/fastdom';
+import React, {PureComponent, Children, createRef} from 'react';
 import {durationBase} from '@shopify/polaris-tokens';
 
 import {classNames} from '../../../../utilities/css';
@@ -16,7 +14,6 @@ import {
   PositionedOverlay,
   PositionedOverlayProps,
 } from '../../../PositionedOverlay';
-
 import {Pane, PaneProps} from '../Pane';
 import styles from '../../Popover.scss';
 
@@ -44,6 +41,7 @@ export interface PopoverOverlayProps {
   active: boolean;
   id: string;
   activator: HTMLElement;
+  preferInputActivator?: PositionedOverlayProps['preferInputActivator'];
   preventAutofocus?: boolean;
   sectioned?: boolean;
   fixed?: boolean;
@@ -54,10 +52,7 @@ interface State {
   transitionStatus: TransitionStatus;
 }
 
-export class PopoverOverlay extends React.PureComponent<
-  PopoverOverlayProps,
-  State
-> {
+export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
   state: State = {
     transitionStatus: this.props.active
       ? TransitionStatus.Entering
@@ -115,6 +110,7 @@ export class PopoverOverlay extends React.PureComponent<
       fullWidth,
       preferredPosition = 'below',
       preferredAlignment = 'center',
+      preferInputActivator = true,
       fixed,
     } = this.props;
     const {transitionStatus} = this.state;
@@ -136,6 +132,7 @@ export class PopoverOverlay extends React.PureComponent<
         fullWidth={fullWidth}
         active={active}
         activator={activator}
+        preferInputActivator={preferInputActivator}
         preferredPosition={preferredPosition}
         preferredAlignment={preferredAlignment}
         render={this.renderPopover.bind(this)}
@@ -164,7 +161,7 @@ export class PopoverOverlay extends React.PureComponent<
       return;
     }
 
-    write(() => {
+    requestAnimationFrame(() => {
       if (this.contentNode.current == null) {
         return;
       }
@@ -175,6 +172,7 @@ export class PopoverOverlay extends React.PureComponent<
     });
   }
 
+  // eslint-disable-next-line @shopify/react-no-multiple-render-methods
   private renderPopover: PositionedOverlayProps['render'] = (
     overlayDetails,
   ) => {
@@ -279,9 +277,29 @@ function renderPopoverContent(
   children: React.ReactNode,
   props?: Partial<PaneProps>,
 ) {
-  const childrenArray = React.Children.toArray(children);
+  const childrenArray = Children.toArray(children);
   if (isElementOfType(childrenArray[0], Pane)) {
     return childrenArray;
   }
   return wrapWithComponent(childrenArray, Pane, props);
+}
+
+export function nodeContainsDescendant(
+  rootNode: HTMLElement,
+  descendant: HTMLElement,
+): boolean {
+  if (rootNode === descendant) {
+    return true;
+  }
+
+  let parent = descendant.parentNode;
+
+  while (parent != null) {
+    if (parent === rootNode) {
+      return true;
+    }
+    parent = parent.parentNode;
+  }
+
+  return false;
 }

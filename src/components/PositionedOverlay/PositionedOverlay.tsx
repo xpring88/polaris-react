@@ -1,8 +1,7 @@
-import React from 'react';
-import {getRectForNode, Rect} from '@shopify/javascript-utilities/geometry';
-import {closest} from '@shopify/javascript-utilities/dom';
+import React, {PureComponent} from 'react';
 
 import {classNames} from '../../utilities/css';
+import {getRectForNode, Rect} from '../../utilities/geometry';
 import {EventListener} from '../EventListener';
 import {Scrollable} from '../Scrollable';
 import {layer} from '../shared';
@@ -16,7 +15,6 @@ import {
   intersectionWithViewport,
   windowRect,
 } from './utilities/math';
-
 import styles from './PositionedOverlay.scss';
 
 type Positioning = 'above' | 'below';
@@ -33,10 +31,12 @@ interface OverlayDetails {
 export interface PositionedOverlayProps {
   active: boolean;
   activator: HTMLElement;
+  preferInputActivator?: boolean;
   preferredPosition?: PreferredPosition;
   preferredAlignment?: PreferredAlignment;
   fullWidth?: boolean;
   fixed?: boolean;
+  preventInteraction?: boolean;
   classNames?: string;
   render(overlayDetails: OverlayDetails): React.ReactNode;
   onScrollOut?(): void;
@@ -58,7 +58,7 @@ interface State {
 
 const OBSERVER_CONFIG = {childList: true, subtree: true};
 
-export class PositionedOverlay extends React.PureComponent<
+export class PositionedOverlay extends PureComponent<
   PositionedOverlayProps,
   State
 > {
@@ -122,7 +122,12 @@ export class PositionedOverlay extends React.PureComponent<
 
   render() {
     const {left, right, top, zIndex, width} = this.state;
-    const {render, fixed, classNames: propClassNames} = this.props;
+    const {
+      render,
+      fixed,
+      preventInteraction,
+      classNames: propClassNames,
+    } = this.props;
 
     const style = {
       top: top == null || isNaN(top) ? undefined : top,
@@ -135,6 +140,7 @@ export class PositionedOverlay extends React.PureComponent<
     const className = classNames(
       styles.PositionedOverlay,
       fixed && styles.fixed,
+      preventInteraction && styles.preventInteraction,
       propClassNames,
     );
 
@@ -195,14 +201,14 @@ export class PositionedOverlay extends React.PureComponent<
           onScrollOut,
           fullWidth,
           fixed,
+          preferInputActivator = true,
         } = this.props;
 
-        const textFieldActivator = activator.querySelector('input');
+        const preferredActivator = preferInputActivator
+          ? activator.querySelector('input') || activator
+          : activator;
 
-        const activatorRect =
-          textFieldActivator != null
-            ? getRectForNode(textFieldActivator)
-            : getRectForNode(activator);
+        const activatorRect = getRectForNode(preferredActivator);
 
         const currentOverlayRect = getRectForNode(this.overlay);
         const scrollableElement = isDocument(this.scrollableContainer)
@@ -211,7 +217,7 @@ export class PositionedOverlay extends React.PureComponent<
         const scrollableContainerRect = getRectForNode(scrollableElement);
 
         const overlayRect = fullWidth
-          ? {...currentOverlayRect, width: activatorRect.width}
+          ? new Rect({...currentOverlayRect, width: activatorRect.width})
           : currentOverlayRect;
 
         // If `body` is 100% height, it still acts as though it were not constrained to that size. This adjusts for that.
@@ -219,9 +225,11 @@ export class PositionedOverlay extends React.PureComponent<
           scrollableContainerRect.height = document.body.scrollHeight;
         }
 
-        const overlayMargins = this.overlay.firstElementChild
-          ? getMarginsForNode(this.overlay.firstElementChild as HTMLElement)
-          : {activator: 0, container: 0, horizontal: 0};
+        const overlayMargins =
+          this.overlay.firstElementChild &&
+          this.overlay.firstChild instanceof HTMLElement
+            ? getMarginsForNode(this.overlay.firstElementChild as HTMLElement)
+            : {activator: 0, container: 0, horizontal: 0};
 
         const containerRect = windowRect();
         const zIndexForLayer = getZIndexForLayerFromNode(activator);
@@ -285,7 +293,7 @@ function getMarginsForNode(node: HTMLElement) {
 }
 
 function getZIndexForLayerFromNode(node: HTMLElement) {
-  const layerNode = closest(node, layer.selector) || document.body;
+  const layerNode = node.closest(layer.selector) || document.body;
   const zIndex =
     layerNode === document.body
       ? 'auto'

@@ -3,9 +3,9 @@
 
 $icon-size: rem(20px);
 $input-height: rem(34px);
-$unstable-input-height: rem(36px);
+$new-input-height: rem(36px);
 $clear-button-width: $icon-size + spacing();
-$unstable-search-max-width: rem(580px);
+$new-search-max-width: rem(580px);
 
 $stacking-order: (
   backdrop: 1,
@@ -25,7 +25,7 @@ $stacking-order: (
 }
 
 .SearchField-newDesignLanguage {
-  max-width: $unstable-search-max-width;
+  max-width: $new-search-max-width;
 
   .Backdrop {
     @include focus-ring($size: 'wide');
@@ -33,7 +33,7 @@ $stacking-order: (
   }
 
   .Input:focus {
-    // stylelint-disable-next-line selector-max-specificity, selector-max-combinators
+    // stylelint-disable-next-line selector-max-specificity, selector-max-combinators, selector-max-class
     ~ .Backdrop {
       @include focus-ring($style: 'focused');
     }
@@ -59,6 +59,10 @@ $stacking-order: (
     background-color: var(--p-action-secondary, color('white'));
   }
 
+  ~ .BackdropShowFocusBorder {
+    border: 1px solid var(--top-bar-border, transparent);
+  }
+
   ~ .Icon {
     @include recolor-icon(var(--p-icon-subdued, color('ink', 'lightest')));
   }
@@ -67,6 +71,10 @@ $stacking-order: (
 .focused {
   .Backdrop {
     background-color: var(--p-action-secondary, color('white'));
+  }
+
+  .BackdropShowFocusBorder {
+    border: 1px solid var(--top-bar-border, transparent);
   }
 
   .Icon {
@@ -90,6 +98,7 @@ $stacking-order: (
 
   &::placeholder {
     color: var(--p-text, var(--top-bar-color));
+    transition: (duration() - 33ms) color easing() 33ms;
   }
 
   &::-webkit-search-decoration,
@@ -98,7 +107,7 @@ $stacking-order: (
   }
 
   .SearchField-newDesignLanguage & {
-    height: $unstable-input-height;
+    height: $new-input-height;
     width: 100%;
   }
 }
@@ -113,6 +122,10 @@ $stacking-order: (
   height: $icon-size;
   pointer-events: none;
   transform: translateY(-50%);
+
+  svg {
+    transition: (duration() - 33ms) fill easing() 33ms;
+  }
 }
 
 .Clear {

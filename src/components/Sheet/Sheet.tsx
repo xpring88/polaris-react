@@ -1,12 +1,11 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useRef} from 'react';
 import {durationSlow} from '@shopify/polaris-tokens';
-import {CSSTransition} from '@material-ui/react-transition-group';
+import {CSSTransition} from 'react-transition-group';
+
 import {useMediaQuery} from '../../utilities/media-query';
 import {classNames} from '../../utilities/css';
-
 import {Key} from '../../types';
 import {layer, overlay} from '../shared';
-
 import {Backdrop} from '../Backdrop';
 import {TrapFocus} from '../TrapFocus';
 import {Portal} from '../Portal';
@@ -51,14 +50,10 @@ export function Sheet({
   const {isNavigationCollapsed} = useMediaQuery();
   const container = useRef<HTMLDivElement>(null);
 
-  const findDOMNode = useCallback(() => {
-    return container.current;
-  }, []);
-
   return (
     <Portal idPrefix="sheet">
       <CSSTransition
-        findDOMNode={findDOMNode}
+        nodeRef={container}
         classNames={
           isNavigationCollapsed ? BOTTOM_CLASS_NAMES : RIGHT_CLASS_NAMES
         }

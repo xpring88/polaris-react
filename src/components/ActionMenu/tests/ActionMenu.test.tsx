@@ -2,9 +2,14 @@ import React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider, trigger} from 'test-utilities/legacy';
 
-import {MenuGroupDescriptor, ActionListItemDescriptor} from '../../../types';
+import type {
+  MenuGroupDescriptor,
+  ActionListItemDescriptor,
+} from '../../../types';
 import {MenuAction, MenuGroup, RollupActions} from '../components';
 import {ActionMenu, ActionMenuProps} from '../ActionMenu';
+import {Button} from '../../Button';
+import {ButtonGroup} from '../../ButtonGroup';
 
 describe('<ActionMenu />', () => {
   const mockProps: ActionMenuProps = {
@@ -57,12 +62,9 @@ describe('<ActionMenu />', () => {
 
       const wrapper = mountWithAppProvider(<ActionMenu actions={actions} />);
 
-      expect(
-        wrapper
-          .find(MenuAction)
-          .at(overrideIndex)
-          .prop('content'),
-      ).toBe(actionWithIndex.content);
+      expect(wrapper.find(MenuAction).at(overrideIndex).prop('content')).toBe(
+        actionWithIndex.content,
+      );
     });
 
     it('renders all actions in their overridden order when multiple indexes are set', () => {
@@ -174,7 +176,7 @@ describe('<ActionMenu />', () => {
       );
     });
 
-    it('renders a group at its overriden order when index is set', () => {
+    it('renders a group at its overridden order when index is set', () => {
       const overrideIndex = 1;
       const groupWithIndex = {
         title: 'group with explicit order in menu',
@@ -185,12 +187,9 @@ describe('<ActionMenu />', () => {
       const groups = [...mockGroups, groupWithIndex];
       const wrapper = mountWithAppProvider(<ActionMenu groups={groups} />);
 
-      expect(
-        wrapper
-          .find(MenuGroup)
-          .at(overrideIndex)
-          .prop('title'),
-      ).toBe(groupWithIndex.title);
+      expect(wrapper.find(MenuGroup).at(overrideIndex).prop('title')).toBe(
+        groupWithIndex.title,
+      );
     });
 
     it('renders all groups in their overridden order when multiple indexes are set', () => {
@@ -371,13 +370,70 @@ describe('<ActionMenu />', () => {
       expect(wrapper.find(MenuGroup).prop('active')).toBeFalsy();
     });
   });
+
+  describe('newDesignLanguage', () => {
+    const mockActions: ActionMenuProps['actions'] = [
+      {content: 'mock content 1'},
+      {content: 'mock content 2'},
+    ];
+
+    it('uses Button and ButtonGroup instead of MenuAction as subcomponents', () => {
+      const wrapper = mountWithAppProvider(
+        <ActionMenu {...mockProps} actions={mockActions} />,
+        {features: {newDesignLanguage: true}},
+      );
+
+      expect(wrapper.find(Button)).toHaveLength(2);
+      expect(wrapper.find(ButtonGroup)).toHaveLength(1);
+      expect(wrapper.find(MenuAction)).toHaveLength(0);
+    });
+
+    it('action callbacks are passed through to Button', () => {
+      const spy = jest.fn();
+      const wrapper = mountWithAppProvider(
+        <ActionMenu
+          {...mockProps}
+          actions={[{content: 'mock', onAction: spy}]}
+        />,
+        {features: {newDesignLanguage: true}},
+      );
+
+      trigger(wrapper.find(Button), 'onClick');
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('uses MenuAction instead of Button and ButtonGroup as subcomponents when disabled', () => {
+      const wrapper = mountWithAppProvider(
+        <ActionMenu {...mockProps} actions={mockActions} />,
+        {features: {newDesignLanguage: false}},
+      );
+
+      expect(wrapper.find(MenuAction)).toHaveLength(2);
+      expect(wrapper.find(Button)).toHaveLength(0);
+      expect(wrapper.find(ButtonGroup)).toHaveLength(0);
+    });
+
+    it('action callbacks are passed through to MenuAction', () => {
+      const spy = jest.fn();
+      const wrapper = mountWithAppProvider(
+        <ActionMenu
+          {...mockProps}
+          actions={[{content: 'mock', onAction: spy}]}
+        />,
+      );
+
+      trigger(wrapper.find(MenuAction), 'onAction');
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 function fillMenuGroup(partialMenuGroup?: Partial<MenuGroupDescriptor>) {
   const mockAction: ActionListItemDescriptor = {
     content: 'mock content',
     url: 'https://shopify.ca',
-    target: 'REMOTE',
   };
 
   return {

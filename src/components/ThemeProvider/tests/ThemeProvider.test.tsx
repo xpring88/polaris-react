@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {createMount} from 'test-utilities';
+
 import {ThemeProvider} from '../ThemeProvider';
 import {ThemeContext, useTheme} from '../../../utilities/theme';
 import {FeaturesContext} from '../../../utilities/features';
+import {colorToHsla} from '../../../utilities/color-transformers';
 
 const mountWithNewDesignLanguage = createMount<
   {newDesignLanguage?: boolean},
@@ -32,7 +34,7 @@ describe('<ThemeProvider />', () => {
 
   it('passes context', () => {
     const Child: React.SFC = () => {
-      const polarisTheme = React.useContext(ThemeContext);
+      const polarisTheme = useContext(ThemeContext);
       return polarisTheme && polarisTheme.logo ? <div /> : null;
     };
 
@@ -91,6 +93,7 @@ describe('<ThemeProvider />', () => {
         '--top-bar-background': '#108043',
         '--top-bar-background-lighter': 'hsla(147, 63%, 43%, 1)',
         '--top-bar-color': 'rgb(255, 255, 255)',
+        '--top-bar-border': 'rgb(196, 205, 213)',
       }),
     });
   });
@@ -125,6 +128,7 @@ describe('<ThemeProvider />', () => {
         '--top-bar-background': '#021123',
         '--top-bar-background-lighter': 'hsla(213, 74%, 22%, 1)',
         '--top-bar-color': 'rgb(255, 255, 255)',
+        '--top-bar-border': 'rgb(196, 205, 213)',
       }),
     });
   });
@@ -185,7 +189,7 @@ describe('<ThemeProvider />', () => {
   });
 
   describe('when nested', () => {
-    it('does not set a default theme', () => {
+    it('sets a default theme', () => {
       const themeProvider = mountWithNewDesignLanguage(
         <ThemeProvider theme={{}}>
           <ThemeProvider theme={{}}>
@@ -195,7 +199,7 @@ describe('<ThemeProvider />', () => {
         {newDesignLanguage: true},
       );
 
-      expect(themeProvider.findAll('div')[1]).not.toHaveReactProps({
+      expect(themeProvider.findAll('div')[1]).toHaveReactProps({
         style: expect.objectContaining({
           '--p-background': expect.any(String),
           '--p-text': expect.any(String),
@@ -241,88 +245,83 @@ describe('<ThemeProvider />', () => {
         'Dark parent, undefined child, child has colors',
         {colorScheme: 'dark'},
         {colors: {critical: '#FFFEEE'}},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Light parent, undefined child, child has colors',
         {colorScheme: 'light'},
         {colors: {critical: '#FFFEEE'}},
-        'rgba(255, 252, 198, 1)',
+        false,
       ],
       [
         'Dark parent, light child, child has colors',
         {colorScheme: 'dark'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'light'},
-        'rgba(255, 252, 198, 1)',
+        false,
       ],
       [
         'Light parent, dark child, child has colors',
         {colorScheme: 'light'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'dark'},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Dark parent, undefined child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'dark'},
         {colors: {critical: '#FFFEEE'}},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Light parent, undefined child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'light'},
         {colors: {critical: '#FFFEEE'}},
-        'rgba(255, 252, 198, 1)',
+        false,
       ],
       [
         'Dark parent, light child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'dark'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'light'},
-        'rgba(255, 252, 198, 1)',
+        false,
       ],
       [
         'Light parent, dark child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'light'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'dark'},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Dark parent, inverse child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'dark'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'inverse'},
-        'rgba(255, 252, 198, 1)',
+        false,
       ],
       [
         'Light parent, inverse child, both have colors',
         {colors: {critical: '#000000'}, colorScheme: 'light'},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'inverse'},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Undefined parent, inverse child, both have colors',
         {colors: {critical: '#000000'}},
         {colors: {critical: '#FFFEEE'}, colorScheme: 'inverse'},
-        'rgba(34, 33, 0, 1)',
+        true,
       ],
       [
         'Dark parent, light child with no colors',
         {colorScheme: 'dark'},
         {colorScheme: 'light'},
-        expect.any(String),
+        false,
       ],
       [
         'Light parent, dark child with no colors',
         {colorScheme: 'light'},
         {colorScheme: 'dark'},
-        expect.any(String),
+        true,
       ],
     ])(
       'Inherits color scheme from parent where: %s',
-      (
-        _: any,
-        topLevelTheme: any,
-        childTheme: any,
-        expectedCritialSurfaceSubdued: any,
-      ) => {
+      (_: any, topLevelTheme: any, childTheme: any, expectedIsDark: any) => {
         const themeProvider = mountWithNewDesignLanguage(
           <ThemeProvider theme={topLevelTheme}>
             <ThemeProvider theme={childTheme}>
@@ -332,12 +331,27 @@ describe('<ThemeProvider />', () => {
           {newDesignLanguage: true},
         );
 
-        expect(themeProvider.findAll('div')[1]).toHaveReactProps({
+        const div = themeProvider.findAll('div')[1];
+
+        expect(div).toHaveReactProps({
           style: expect.objectContaining({
-            '--p-surface-critical-subdued': expectedCritialSurfaceSubdued,
+            '--p-surface-critical-subdued': expect.any(String),
           }),
         });
+
+        expect(
+          isDark(
+            (div.props.style as {[key: string]: string})[
+              '--p-surface-critical-subdued'
+            ],
+          ),
+        ).toBe(expectedIsDark);
       },
     );
   });
 });
+
+function isDark(color: string) {
+  const {lightness} = colorToHsla(color);
+  return Boolean(lightness < 50);
+}

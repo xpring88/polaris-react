@@ -1,5 +1,5 @@
 import React from 'react';
-import {createUniqueIDFactory} from '@shopify/javascript-utilities/other';
+
 import styles from './DescriptionList.scss';
 
 interface Item {
@@ -14,21 +14,21 @@ export interface DescriptionListProps {
   items: Item[];
 }
 
-const getUniqueTermKey = createUniqueIDFactory(`Term`);
-const getUniqueDescriptionKey = createUniqueIDFactory(`Description`);
-
 export function DescriptionList({items}: DescriptionListProps) {
+  // There's no good key to give React so using the index is a last resport.
+  // we can't use the term/description value as it may be a react component
+  // which can't be stringified
   const terms = items.reduce(
-    (allTerms, {term, description}) => [
+    (allTerms, {term, description}, index) => [
       ...allTerms,
-      <dt key={getUniqueTermKey()} className={styles.Term}>
+      <dt key={`dt${index}`} className={styles.Term}>
         {term}
       </dt>,
-      <dd key={getUniqueDescriptionKey()} className={styles.Description}>
+      <dd key={`dd${index}`} className={styles.Description}>
         {description}
       </dd>,
     ],
-    [] as React.ReactNode[],
+    [],
   );
 
   return <dl className={styles.DescriptionList}>{terms}</dl>;

@@ -1,37 +1,19 @@
 import React from 'react';
-import {Weekdays} from '@shopify/javascript-utilities/dates';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider} from 'test-utilities/legacy';
+
 import {Weekday} from '../../Weekday';
 import {Day} from '../../Day';
 import {Month} from '../Month';
 
 describe('<Month />', () => {
   describe('title', () => {
-    it('passes the abbreviated value to the title prop of Weekday', () => {
+    it('passes the label and abbreviated value to Weekday', () => {
       const month = mountWithAppProvider(
-        <Month month={0} year={2018} weekStartsOn={Weekdays.Monday} />,
+        <Month month={0} year={2018} weekStartsOn={1} />,
       );
-      expect(
-        month
-          .find(Weekday)
-          .first()
-          .prop('title'),
-      ).toBe('Mo');
-    });
-  });
-
-  describe('label', () => {
-    it('passes the numeric value to the label prop of Weekday', () => {
-      const month = mountWithAppProvider(
-        <Month month={0} year={2018} weekStartsOn={Weekdays.Monday} />,
-      );
-      expect(
-        month
-          .find(Weekday)
-          .first()
-          .prop('label'),
-      ).toBe(1);
+      expect(month.find(Weekday).first().prop('title')).toBe('Mo');
+      expect(month.find(Weekday).first().prop('label')).toBe('Monday');
     });
   });
 
@@ -48,24 +30,14 @@ describe('<Month />', () => {
     );
 
     it('passes true to Weekday if month year and weekStartsOn are today', () => {
-      expect(
-        month
-          .find(Weekday)
-          .first()
-          .prop('current'),
-      ).toBe(true);
+      expect(month.find(Weekday).first().prop('current')).toBe(true);
     });
 
     it('passes false to Weekday if month year and weekStartsOn are not today', () => {
       const month = mountWithAppProvider(
-        <Month month={1} year={2016} weekStartsOn={Weekdays.Monday} />,
+        <Month month={1} year={2016} weekStartsOn={1} />,
       );
-      expect(
-        month
-          .find(Weekday)
-          .first()
-          .prop('current'),
-      ).toBe(false);
+      expect(month.find(Weekday).first().prop('current')).toBe(false);
     });
   });
 
@@ -76,7 +48,7 @@ describe('<Month />', () => {
         <Month
           month={0}
           year={2018}
-          weekStartsOn={Weekdays.Monday}
+          weekStartsOn={1}
           allowRange
           hoverDate={hoverDate}
           selected={{

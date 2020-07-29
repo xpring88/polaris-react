@@ -1,9 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {findFirstFocusableNode} from '@shopify/javascript-utilities/focus';
 
 import {Portal} from '../Portal';
+import {findFirstFocusableNode} from '../../utilities/focus';
 import {useUniqueId} from '../../utilities/unique-id';
 import {useToggle} from '../../utilities/use-toggle';
+
 import {TooltipOverlay, TooltipOverlayProps} from './components';
 import styles from './Tooltip.scss';
 
@@ -16,6 +17,8 @@ export interface TooltipProps {
   light?: boolean;
   /** Toggle whether the tooltip is visible */
   active?: boolean;
+  /** Dismiss tooltip when not interacting with its children */
+  dismissOnMouseOut?: TooltipOverlayProps['preventInteraction'];
   /**
    * The direction the tooltip tries to display
    * @default 'below'
@@ -32,6 +35,7 @@ export function Tooltip({
   children,
   content,
   light,
+  dismissOnMouseOut,
   active: originalActive,
   preferredPosition = 'below',
   activatorWrapper = 'span',
@@ -67,6 +71,7 @@ export function Tooltip({
         active={active}
         onClose={noop}
         light={light}
+        preventInteraction={dismissOnMouseOut}
       >
         <div className={styles.Label} testID="TooltipOverlayLabel">
           {content}
@@ -97,7 +102,9 @@ export function Tooltip({
       return;
     }
 
-    setActivatorNode(node.firstElementChild as HTMLElement);
+    node.firstElementChild instanceof HTMLElement &&
+      setActivatorNode(node.firstElementChild);
+
     activatorContainerRef.current = node;
   }
 

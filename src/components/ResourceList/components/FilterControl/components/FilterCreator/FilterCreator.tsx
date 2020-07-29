@@ -1,4 +1,5 @@
 import React, {useRef, useState, useCallback} from 'react';
+
 import {Button} from '../../../../../Button';
 import {Popover} from '../../../../../Popover';
 import {Select} from '../../../../../Select';
@@ -6,9 +7,8 @@ import {FormLayout} from '../../../../../FormLayout';
 import {Form} from '../../../../../Form';
 import {useToggle} from '../../../../../../utilities/use-toggle';
 import {useI18n} from '../../../../../../utilities/i18n';
-
 import {FilterValueSelector} from '../FilterValueSelector';
-import {AppliedFilter, Filter, Operator} from '../../types';
+import type {AppliedFilter, Filter, Operator} from '../../types';
 
 export interface FilterCreatorProps {
   filters: Filter[];
@@ -39,7 +39,7 @@ export function FilterCreator({
     AppliedFilter['value']
   >();
   const i18n = useI18n();
-  const node = useRef<HTMLButtonElement>(null);
+  const node = useRef<HTMLButtonElement | null>(null);
 
   const canAddFilter = Boolean(
     selectedFilter && selectedFilterKey && selectedFilterValue,
@@ -49,8 +49,7 @@ export function FilterCreator({
     (...args: React.FocusEvent<HTMLButtonElement>[]) => {
       const event = args[0];
       if (!node.current && event) {
-        // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/31065
-        (node as any).current = event.target as HTMLButtonElement;
+        node.current = event.target;
       }
     },
     [],

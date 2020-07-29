@@ -1,4 +1,4 @@
-import {Action} from '../../types';
+import type {Action} from '../../types';
 
 interface ContextualSaveBarAction {
   /** A destination to link to */
@@ -30,6 +30,8 @@ export interface ContextualSaveBarProps {
   saveAction?: ContextualSaveBarAction;
   /** Discard or cancel contextual save bar action with text defaulting to 'Discard' */
   discardAction?: ContextualSaveBarCombinedActionProps;
+  /** Remove the normal max-width on the contextual save bar */
+  fullWidth?: boolean;
 }
 
 // Toast
@@ -46,7 +48,7 @@ export interface ToastProps {
   error?: boolean;
   /** Callback when the dismiss icon is clicked */
   onDismiss(): void;
-  /** Adds an action next to the message (stand-alone app use only) */
+  /** Adds an action next to the message */
   action?: Action;
 }
 

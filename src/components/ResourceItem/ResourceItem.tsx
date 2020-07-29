@@ -1,26 +1,29 @@
-import React, {useContext} from 'react';
+import React, {Component, createRef, useContext} from 'react';
 import {HorizontalDotsMinor} from '@shopify/polaris-icons';
-import {createUniqueIDFactory} from '@shopify/javascript-utilities/other';
 import isEqual from 'lodash/isEqual';
-import {classNames} from '../../utilities/css';
+
+import {classNames, variationName} from '../../utilities/css';
 import {useI18n} from '../../utilities/i18n';
 import {useFeatures} from '../../utilities/features';
-import {DisableableAction} from '../../types';
+import type {DisableableAction} from '../../types';
 import {ActionList} from '../ActionList';
 import {Popover} from '../Popover';
-import {AvatarProps} from '../Avatar';
+import type {AvatarProps} from '../Avatar';
 import {UnstyledLink} from '../UnstyledLink';
-import {ThumbnailProps} from '../Thumbnail';
+import type {ThumbnailProps} from '../Thumbnail';
 import {ButtonGroup} from '../ButtonGroup';
 import {Checkbox} from '../Checkbox';
 import {Button, buttonsFrom} from '../Button';
-
 import {
   ResourceListContext,
   SELECT_ALL_ITEMS,
   ResourceListSelectedItems,
 } from '../../utilities/resource-list';
+import {globalIdGeneratorFactory} from '../../utilities/unique-id';
+
 import styles from './ResourceItem.scss';
+
+type Alignment = 'leading' | 'trailing' | 'center' | 'fill' | 'baseline';
 
 interface BaseProps {
   /** Visually hidden text for screen readers used for item link*/
@@ -49,6 +52,8 @@ interface BaseProps {
   onClick?(id?: string): void;
   /** Content for the details area */
   children?: React.ReactNode;
+  /** Adjust vertical alignment of elements */
+  verticalAlignment?: Alignment;
 }
 
 interface PropsWithUrl extends BaseProps {
@@ -78,10 +83,12 @@ interface State {
 
 type CombinedProps = PropsFromWrapper & (PropsWithUrl | PropsWithClick);
 
-const getUniqueCheckboxID = createUniqueIDFactory('ResourceListItemCheckbox');
-const getUniqueOverlayID = createUniqueIDFactory('ResourceListItemOverlay');
+const getUniqueCheckboxID = globalIdGeneratorFactory(
+  'ResourceListItemCheckbox',
+);
+const getUniqueOverlayID = globalIdGeneratorFactory('ResourceListItemOverlay');
 
-class BaseResourceItem extends React.Component<CombinedProps, State> {
+class BaseResourceItem extends Component<CombinedProps, State> {
   static getDerivedStateFromProps(nextProps: CombinedProps, prevState: State) {
     const selected = isSelected(nextProps.id, nextProps.context.selectedItems);
 
@@ -102,19 +109,23 @@ class BaseResourceItem extends React.Component<CombinedProps, State> {
   private node: HTMLDivElement | null = null;
   private checkboxId = getUniqueCheckboxID();
   private overlayId = getUniqueOverlayID();
-  private buttonOverlay = React.createRef<HTMLButtonElement>();
+  private buttonOverlay = createRef<HTMLButtonElement>();
 
   shouldComponentUpdate(nextProps: CombinedProps, nextState: State) {
     const {
+      children: nextChildren,
       context: {selectedItems: nextSelectedItems, ...restNextContext},
       ...restNextProps
     } = nextProps;
+
     const {
+      children,
       context: {selectedItems, ...restContext},
       ...restProps
     } = this.props;
 
     const nextSelectMode = nextProps.context.selectMode;
+
     return (
       !isEqual(this.state, nextState) ||
       this.props.context.selectMode !== nextSelectMode ||
@@ -139,6 +150,7 @@ class BaseResourceItem extends React.Component<CombinedProps, State> {
       context: {selectable, selectMode, loading, resourceName},
       i18n,
       features: {newDesignLanguage},
+      verticalAlignment,
     } = this.props;
 
     const {actionsMenuVisible, focused, focusedInner, selected} = this.state;
@@ -180,7 +192,12 @@ class BaseResourceItem extends React.Component<CombinedProps, State> {
 
     if (media || selectable) {
       ownedMarkup = (
-        <div className={styles.Owned}>
+        <div
+          className={classNames(
+            styles.Owned,
+            !mediaMarkup && styles.OwnedNoMedia,
+          )}
+        >
           {handleMarkup}
           {mediaMarkup}
         </div>
@@ -254,10 +271,16 @@ class BaseResourceItem extends React.Component<CombinedProps, State> {
       <div className={styles.Content}>{children}</div>
     ) : null;
 
+    const containerClassName = classNames(
+      styles.Container,
+      verticalAlignment &&
+        styles[variationName('alignment', verticalAlignment)],
+    );
+
     const containerMarkup = (
       <div
         testID="Item-Content"
-        className={styles.Container}
+        className={containerClassName}
         id={this.props.id}
       >
         {ownedMarkup}

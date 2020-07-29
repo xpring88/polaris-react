@@ -10,22 +10,25 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
 @mixin banner-attributes($highlight, $background, $in-page, $tint) {
   transition: box-shadow duration() easing();
   transition-delay: duration(fast);
-  border-radius: var(--p-border-radius-wide, inherit);
   box-shadow: var(--p-banner-border, none);
 
   @media (-ms-high-contrast: active) {
-    box-shadow: inset 0 $accent-height 0 0 ms-high-contrast-color('text'),
-      inset 0 0 border-width(base) border-width(base)
-        ms-high-contrast-color('text');
+    outline: 1px solid;
   }
 
   @if $in-page {
+    border-radius: var(
+      --p-border-radius-wide,
+      0 0 border-radius() border-radius()
+    );
     box-shadow: var(
       --p-banner-border,
       inset 0 $accent-height 0 0 $highlight,
       inset shadow(transparent),
       shadow()
     );
+  } @else {
+    border-radius: var(--p-border-radius-base, border-radius());
   }
 
   @if $tint {
@@ -68,7 +71,7 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
     --p-banner-background: var(--p-surface-success-subdued);
     --p-banner-border: var(--p-banner-border-success);
     @include banner-attributes(
-      var(--p-border-success, color('green')),
+      var(--p-override-none, color('green')),
       color('green', 'lighter'),
       $in-page,
       true
@@ -79,7 +82,7 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
     --p-banner-background: var(--p-surface-highlight-subdued);
     --p-banner-border: var(--p-banner-border-highlight);
     @include banner-attributes(
-      var(--p-border-highlight, color('teal')),
+      var(--p-override-none, color('teal')),
       color('teal', 'lighter'),
       $in-page,
       true
@@ -90,7 +93,7 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
     --p-banner-background: var(--p-surface-warning-subdued);
     --p-banner-border: var(--p-banner-border-warning);
     @include banner-attributes(
-      var(--p-border-warning, color('yellow')),
+      var(--p-override-none, color('yellow')),
       color('yellow', 'lighter'),
       $in-page,
       true
@@ -101,7 +104,7 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
     --p-banner-background: var(--p-surface-critical-subdued);
     --p-banner-border: var(--p-banner-border-critical);
     @include banner-attributes(
-      var(--p-border-critical, color('red')),
+      var(--p-override-none, color('red')),
       color('red', 'lighter'),
       $in-page,
       true
@@ -110,13 +113,29 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
 }
 
 .Banner {
+  --p-rgb-text: 33, 43, 54;
   position: relative;
   display: flex;
+}
+
+.ContentWrapper {
+  flex: 1 1 auto;
 }
 
 .withinContentContainer {
   border-radius: var(--p-border-radius-wide, border-radius());
   padding: spacing(tight) $intermediate-spacing;
+
+  &.newDesignLanguage {
+    $newDesignLanguageSpacing: rem(14px);
+    $newDesignLanguageOffset: $newDesignLanguageSpacing - spacing();
+    padding: spacing() spacing() $newDesignLanguageSpacing;
+
+    // stylelint-disable-next-line selector-max-class
+    .ContentWrapper {
+      margin-top: $newDesignLanguageOffset;
+    }
+  }
 
   @include banner-variants;
 
@@ -126,6 +145,11 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
 
   .Ribbon {
     padding-right: $intermediate-spacing;
+
+    // stylelint-disable-next-line selector-max-combinators, selector-max-class
+    .newDesignLanguage & {
+      padding-right: spacing();
+    }
   }
 
   .Actions {
@@ -143,6 +167,17 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
   border-radius: 0 0 border-radius() border-radius();
   padding: spacing();
 
+  &.newDesignLanguage {
+    $newDesignLanguageSpacing: rem(18px);
+    $newDesignLanguageOffset: $newDesignLanguageSpacing - spacing(loose);
+    padding: spacing(loose) spacing(loose) $newDesignLanguageSpacing;
+
+    // stylelint-disable-next-line selector-max-class
+    .ContentWrapper {
+      margin-top: $newDesignLanguageOffset;
+    }
+  }
+
   @include banner-variants(true);
 
   + .Banner {
@@ -151,6 +186,11 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
 
   .Ribbon {
     padding-right: spacing();
+
+    // stylelint-disable-next-line selector-max-combinators, selector-max-class
+    .newDesignLanguage & {
+      padding-right: spacing(loose);
+    }
   }
 
   .Actions {
@@ -169,13 +209,17 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
 }
 
 .Heading {
-  padding-top: $heading-offset;
+  padding-top: var(--p-override-none, $heading-offset);
   word-break: break-word;
 }
 
 .Content {
   @include text-breakword;
   padding: spacing(extra-tight) 0;
+
+  .newDesignLanguage & {
+    padding: rem(2px) 0;
+  }
 }
 
 .Ribbon {
@@ -195,6 +239,7 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
   @include unstyled-button;
   @include unstyled-link;
   display: inline-block;
+  text-align: left;
   margin: (-1 * $secondary-action-vertical-padding)
     (-0.5 * $secondary-action-horizontal-padding);
   padding: $secondary-action-vertical-padding
@@ -202,42 +247,23 @@ $secondary-action-horizontal-padding: 1.5 * spacing(tight);
   color: var(--p-text, color('ink'));
   padding-left: rem(6px);
 
-  &:hover > .Text::after {
-    opacity: 0.75;
+  &:hover > .Text {
+    box-shadow: 0 -2px 0 0 rgba(var(--p-rgb-text), 0.75) inset;
   }
 
-  &:active > .Text::after {
-    opacity: 0;
+  &:active > .Text {
+    box-shadow: 0 -2px 0 0 rgba(var(--p-rgb-text), 0) inset;
   }
 
   &:focus > .Text {
     @include plain-button-backdrop;
     @include high-contrast-button-outline;
-
-    &::after {
-      opacity: 0;
-    }
+    box-shadow: none;
   }
 }
 
-// stylelint-enable selector-max-specificity
 .Text {
-  position: relative;
-
-  &::after,
-  &::before {
-    content: '';
-    position: absolute;
-  }
-
-  &::after {
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: block;
-    border: border-width() solid currentColor;
-    opacity: 0.25;
-    will-change: opacity;
-    transition: opacity duration() easing();
-  }
+  box-shadow: 0 -2px 0 0 rgba(var(--p-rgb-text), 0.25) inset;
+  will-change: box-shadow;
+  transition: box-shadow duration() easing();
 }

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
+
 import {classNames, variationName} from '../../utilities/css';
+
 import {Item} from './components';
 import styles from './List.scss';
 
@@ -15,7 +17,7 @@ export interface ListProps {
   children?: React.ReactNode;
 }
 
-export class List extends React.PureComponent<ListProps, never> {
+export class List extends PureComponent<ListProps, never> {
   static Item = Item;
 
   render() {

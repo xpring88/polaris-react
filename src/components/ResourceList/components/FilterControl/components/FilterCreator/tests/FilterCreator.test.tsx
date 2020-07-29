@@ -1,4 +1,5 @@
 import React from 'react';
+import {mountWithApp} from 'test-utilities';
 // eslint-disable-next-line no-restricted-imports
 import {
   trigger,
@@ -7,9 +8,16 @@ import {
   ReactWrapper,
 } from 'test-utilities/legacy';
 import {Button, Select, Popover} from 'components';
+
 import {FilterCreator, FilterCreatorProps} from '../FilterCreator';
 import {FilterValueSelector} from '../../FilterValueSelector';
 import {FilterType} from '../../../types';
+
+jest.mock('../../../../../../Popover/components', () => ({
+  PopoverOverlay: function PopoverOverlay({children}: any) {
+    return children;
+  },
+}));
 
 describe('<FilterCreator />', () => {
   const mockDefaultProps: FilterCreatorProps = {
@@ -60,6 +68,49 @@ describe('<FilterCreator />', () => {
     disabled: false,
   };
 
+  it('focuses the activator after adding a filter', () => {
+    const filterCreator = mountWithApp(
+      <FilterCreator {...mockDefaultProps} onAddFilter={() => {}} />,
+    );
+
+    filterCreator
+      .find(Select)!
+      .trigger('onChange', mockDefaultProps.filters[0].key);
+
+    const activator = filterCreator.find(Button, {children: 'Filter'})!;
+
+    // This any cast is needed as the activator's onFocus actually uses the
+    // event argument that gets passed into the onFocus handler, though we type
+    // onFocus as accepting no arguments
+    (activator as any).trigger('onFocus', {target: activator!.domNode});
+    filterCreator.find(FilterValueSelector)!.trigger('onChange', 'x');
+
+    filterCreator.find(Button, {children: 'Add filter'})!.trigger('onClick');
+
+    expect(document.activeElement).toBe(activator!.domNode);
+  });
+
+  it('does not focus the activator after adding a filter if focus was never originally received by the by activator', () => {
+    const filterCreator = mountWithApp(
+      <FilterCreator {...mockDefaultProps} onAddFilter={() => {}} />,
+    );
+
+    filterCreator
+      .find(Select)!
+      .trigger('onChange', mockDefaultProps.filters[0].key);
+
+    const activator = filterCreator.find(Button, {children: 'Filter'})!;
+
+    // This any cast is needed as the activator's onFocus actually uses the
+    // event argument that gets passed into the onFocus handler, though we type
+    // onFocus as accepting no arguments
+    (activator as any).trigger('onFocus', {target: activator!.domNode});
+
+    filterCreator.find(Button, {children: 'Add filter'})!.trigger('onClick');
+
+    expect(document.activeElement).not.toBe(activator.domNode);
+  });
+
   it('renders just a button by default', () => {
     const wrapper = mountWithAppProvider(
       <FilterCreator {...mockDefaultProps} />,
@@ -69,7 +120,6 @@ describe('<FilterCreator />', () => {
       findByTestID(wrapper, 'FilterCreator-FilterActivator').exists(),
     ).toBe(true);
     expect(wrapper.find(Button)).toHaveLength(1);
-    expect(wrapper.find(Select).exists()).toBe(false);
   });
 
   it('renders a non-active popover on default', () => {
@@ -131,19 +181,9 @@ describe('<FilterCreator />', () => {
     selectFilterKey(wrapper, mockDefaultProps.filters[0].key);
     selectFilterValue(wrapper, 'Bundle');
 
-    expect(
-      wrapper
-        .find(Select)
-        .at(0)
-        .prop('value'),
-    ).toBeDefined();
+    expect(wrapper.find(Select).at(0).prop('value')).toBeDefined();
     clickAddFilter(wrapper);
-    expect(
-      wrapper
-        .find(Select)
-        .at(0)
-        .prop('value'),
-    ).toBeUndefined();
+    expect(wrapper.find(Select).at(0).prop('value')).toBeUndefined();
   });
 
   describe('filters', () => {

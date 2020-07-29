@@ -1,9 +1,12 @@
 import React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider} from 'test-utilities/legacy';
+
 import {EventListener} from '../../EventListener';
 import {PositionedOverlay} from '../PositionedOverlay';
 import * as mathModule from '../utilities/math';
+import * as geometry from '../../../utilities/geometry';
+import styles from '../PositionedOverlay.scss';
 
 describe('<PositionedOverlay />', () => {
   const mockProps = {
@@ -98,6 +101,26 @@ describe('<PositionedOverlay />', () => {
     });
   });
 
+  describe('preventInteraction', () => {
+    it('passes preventInteraction to PositionedOverlay when preventInteraction is true', () => {
+      const positionedOverlay = mountWithAppProvider(
+        <PositionedOverlay {...mockProps} preventInteraction />,
+      );
+      expect(positionedOverlay.find('div').prop('className')).toContain(
+        styles.preventInteraction,
+      );
+    });
+
+    it('does not pass preventInteraction to PositionedOverlay by default', () => {
+      const positionedOverlay = mountWithAppProvider(
+        <PositionedOverlay {...mockProps} />,
+      );
+      expect(positionedOverlay.find('div').prop('className')).not.toContain(
+        styles.preventInteraction,
+      );
+    });
+  });
+
   describe('lifecycle', () => {
     it('updates safely', () => {
       const positionedOverlay = mountWithAppProvider(
@@ -129,6 +152,51 @@ describe('<PositionedOverlay />', () => {
       expect(positionedOverlay.find(EventListener).prop('event')).toBe(
         'resize',
       );
+    });
+  });
+
+  describe('preferInputActivator', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('uses the input to calculate its dimensions when true', () => {
+      const getRectForNodeSpy = jest.spyOn(geometry, 'getRectForNode');
+
+      const activator = document.createElement('div');
+      const input = document.createElement('input');
+      activator.appendChild(input);
+
+      mountWithAppProvider(
+        <PositionedOverlay
+          {...mockProps}
+          preferInputActivator
+          activator={activator}
+        />,
+      );
+
+      expect(
+        getRectForNodeSpy.mock.calls.some(([node]) => node === input),
+      ).toBe(true);
+    });
+
+    it('does not use the input to calculate its dimensions when false', () => {
+      const getRectForNodeSpy = jest.spyOn(geometry, 'getRectForNode');
+      const activator = document.createElement('div');
+      const input = document.createElement('input');
+      activator.appendChild(input);
+
+      mountWithAppProvider(
+        <PositionedOverlay
+          {...mockProps}
+          preferInputActivator={false}
+          activator={activator}
+        />,
+      );
+
+      expect(
+        getRectForNodeSpy.mock.calls.some(([node]) => node === input),
+      ).toBe(false);
     });
   });
 });

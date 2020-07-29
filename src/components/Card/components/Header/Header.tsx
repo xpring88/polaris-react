@@ -1,11 +1,10 @@
-import React from 'react';
+import React, {isValidElement} from 'react';
 
-import {DisableableAction} from '../../../../types';
+import type {DisableableAction} from '../../../../types';
 import {buttonsFrom} from '../../../Button';
 import {ButtonGroup} from '../../../ButtonGroup';
 import {Stack} from '../../../Stack';
 import {Heading} from '../../../Heading';
-
 import styles from '../../Card.scss';
 
 export interface HeaderProps {
@@ -19,7 +18,7 @@ export function Header({children, title, actions}: HeaderProps) {
     <ButtonGroup>{buttonsFrom(actions, {plain: true})}</ButtonGroup>
   ) : null;
 
-  const titleMarkup = React.isValidElement(title) ? (
+  const titleMarkup = isValidElement(title) ? (
     title
   ) : (
     <Heading>{title}</Heading>

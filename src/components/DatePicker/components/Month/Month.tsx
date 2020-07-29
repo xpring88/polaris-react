@@ -1,9 +1,7 @@
 import React, {useCallback, useMemo} from 'react';
+
+import {classNames} from '../../../../utilities/css';
 import {
-  Range,
-  Weekdays,
-  Months,
-  Year,
   isDateBefore,
   isDateAfter,
   isSameDay,
@@ -11,8 +9,9 @@ import {
   dateIsInRange,
   dateIsSelected,
   getNewRange,
-} from '@shopify/javascript-utilities/dates';
-import {classNames} from '../../../../utilities/css';
+  getOrderedWeekdays,
+} from '../../../../utilities/dates';
+import type {Range} from '../../../../utilities/dates';
 import {useI18n} from '../../../../utilities/i18n';
 import styles from '../../DatePicker.scss';
 import {Day} from '../Day';
@@ -23,28 +22,16 @@ export interface MonthProps {
   focusedDate?: Date;
   selected?: Range;
   hoverDate?: Date;
-  month: Months;
-  year: Year;
+  month: number;
+  year: number;
   disableDatesBefore?: Date;
   disableDatesAfter?: Date;
   allowRange?: boolean;
-  weekStartsOn: Weekdays;
+  weekStartsOn: number;
   onChange?(date: Range): void;
   onHover?(hoverEnd: Date): void;
   onFocus?(date: Date): void;
-  monthName?(month: Months): string;
-  weekdayName?(weekday: Weekdays): string;
 }
-
-const WEEKDAYS = [
-  Weekdays.Sunday,
-  Weekdays.Monday,
-  Weekdays.Tuesday,
-  Weekdays.Wednesday,
-  Weekdays.Thursday,
-  Weekdays.Friday,
-  Weekdays.Saturday,
-];
 
 export function Month({
   focusedDate,
@@ -74,14 +61,14 @@ export function Month({
     weekStartsOn,
     year,
   ]);
-  const weekdays = getWeekdaysOrdered(weekStartsOn).map((weekday) => (
+  const weekdays = getOrderedWeekdays(weekStartsOn).map((weekday) => (
     <Weekday
       key={weekday}
       title={i18n.translate(
         `Polaris.DatePicker.daysAbbreviated.${weekdayName(weekday)}`,
       )}
+      label={i18n.translate(`Polaris.DatePicker.days.${weekdayName(weekday)}`)}
       current={current && new Date().getDay() === weekday}
-      label={weekday}
     />
   ));
 
@@ -108,6 +95,22 @@ export function Month({
       (disableDatesBefore && isDateBefore(day, disableDatesBefore)) ||
       (disableDatesAfter && isDateAfter(day, disableDatesAfter));
 
+    const isFirstSelectedDay =
+      allowRange && selected && isDateStart(day, selected);
+    const isLastSelectedDay =
+      allowRange &&
+      selected &&
+      ((!isSameDay(selected.start, selected.end) && isDateEnd(day, selected)) ||
+        (hoverDate &&
+          isSameDay(selected.start, selected.end) &&
+          isDateAfter(hoverDate, selected.start) &&
+          isSameDay(day, hoverDate) &&
+          !isFirstSelectedDay));
+    const rangeIsDifferent = !(
+      selected && isSameDay(selected.start, selected.end)
+    );
+    const isHoveringRight = hoverDate && isDateBefore(day, hoverDate);
+
     return (
       <Day
         focused={focusedDate != null && isSameDay(day, focusedDate)}
@@ -124,6 +127,10 @@ export function Month({
           hoverDate != null &&
           isInHoveringRange(day, selected, hoverDate)
         }
+        isLastSelectedDay={isLastSelectedDay}
+        isFirstSelectedDay={isFirstSelectedDay}
+        isHoveringRight={isHoveringRight}
+        rangeIsDifferent={rangeIsDifferent}
       />
     );
   }
@@ -161,8 +168,16 @@ function hoveringDateIsInRange(
   return Boolean(isSameDay(start, end) && day > start && day <= hoverEndDate);
 }
 
-function getWeekdaysOrdered(weekStartsOn: Weekdays): Weekdays[] {
-  const weekDays = [...WEEKDAYS];
-  const restOfDays = weekDays.splice(weekStartsOn);
-  return [...restOfDays, ...weekDays];
+function isDateEnd(day: Date | null, range: Range) {
+  if (day == null) return false;
+  const {end} = range;
+
+  return Boolean(end && isSameDay(end, day));
+}
+
+function isDateStart(day: Date | null, range: Range) {
+  if (day == null) return false;
+  const {start} = range;
+
+  return Boolean(start && isSameDay(start, day));
 }

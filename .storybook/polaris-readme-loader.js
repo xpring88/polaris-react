@@ -24,13 +24,25 @@ module.exports = function loader(source) {
 
   const readme = parseCodeExamples(source);
 
-  const testIndividualExamples = ['Modal', 'Card'].includes(readme.name);
+  const testIndividualExamples = [
+    'Modal',
+    'Card',
+    'Top bar',
+    'App provider',
+    'Contextual save bar',
+    'Frame',
+    'Loading',
+    'Sheet',
+    'Theme provider',
+  ].includes(readme.name);
 
   const csfExports = readme.examples.map((example) => {
     return `
 const ${example.storyName}Component = (${example.code})();
 export function ${example.storyName}() {
-  return <${example.storyName}Component/>;
+  return <div data-omit-app-provider="${readme.omitAppProvider}"><${
+      example.storyName
+    }Component /></div>;
 }
 ${example.storyName}.story = {
   name: ${JSON.stringify(example.name)},
@@ -83,9 +95,6 @@ AllExamples.story = {
   return `
 import React, {${hooks}} from 'react';
 import {withA11y} from '@storybook/addon-a11y';
-// In production mode webpack shakes this away, so explitly include it.
-// The following import can be removed in v5, where global CSS has been removed:
-import '@shopify/polaris/styles/global.scss';
 import {
   AccountConnection,
   ActionList,
@@ -136,6 +145,7 @@ import {
   Link,
   List,
   Loading,
+  MediaCard,
   Modal,
   Navigation,
   OptionList,
@@ -177,7 +187,8 @@ import {
   TrapFocus,
   Truncate,
   UnstyledLink,
-  VisuallyHidden
+  VisuallyHidden,
+  VideoThumbnail
 } from '@shopify/polaris';
 import {
   PlusMinor,
@@ -272,6 +283,7 @@ function parseCodeExamples(data) {
     name: matter.data.name,
     category: matter.data.category,
     examples: generateExamples(matter),
+    omitAppProvider: matter.data.omitAppProvider || false,
   };
 }
 

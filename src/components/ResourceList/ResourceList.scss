@@ -118,6 +118,14 @@ $item-wrapper-loading-height: rem(64px);
   }
 }
 
+.SortWrapper {
+  @include layout-flex-fix;
+
+  > * {
+    max-width: 100%;
+  }
+}
+
 .HeaderTitleWrapper {
   white-space: nowrap;
   text-overflow: ellipsis;

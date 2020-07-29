@@ -18,7 +18,8 @@
         "success": "Udało się",
         "warning": "Ostrzeżenie",
         "attention": "Uwaga",
-        "new": "Nowe"
+        "new": "Nowe",
+        "critical": "Krytyczny"
       }
     },
     "Button": {
@@ -71,6 +72,15 @@
         "friday": "Pt",
         "saturday": "Sb",
         "sunday": "Nd"
+      },
+      "days": {
+        "monday": "Poniedziałek",
+        "tuesday": "Wtorek",
+        "wednesday": "Środa",
+        "thursday": "Czwartek",
+        "friday": "Piątek",
+        "saturday": "Sobota",
+        "sunday": "Niedziela"
       }
     },
     "DiscardConfirmationModal": {
@@ -121,7 +131,7 @@
       "moreFiltersWithCount": "Więcej filtrów ({count})"
     },
     "Modal": {
-      "iFrameTitle": "treść - marża",
+      "iFrameTitle": "znacznik treści",
       "modalWarning": "W oknie modalnym brakuje tych wymaganych właściwości: {missingProps}"
     },
     "Pagination": {
@@ -181,7 +191,7 @@
         "SelectOptions": {
           "PastWeek": "w ostatnim tygodniu",
           "PastMonth": "w ostatnim miesiącu",
-          "PastQuarter": "w ostatnich 3 miesiącach",
+          "PastQuarter": "w ciągu ostatnich 3 miesięcy",
           "PastYear": "w ostatnim roku",
           "ComingWeek": "w następnym tygodniu",
           "ComingMonth": "w następnym miesiącu",
@@ -193,7 +203,7 @@
         "FilterLabelForValue": {
           "past_week": "w ostatnim tygodniu",
           "past_month": "w ostatnim miesiącu",
-          "past_quarter": "w ostatnich 3 miesiącach",
+          "past_quarter": "w ciągu ostatnich 3 miesięcy",
           "past_year": "w ostatnim roku",
           "coming_week": "w następnym tygodniu",
           "coming_month": "w następnym miesiącu",
@@ -226,6 +236,59 @@
       "SearchField": {
         "clearButtonLabel": "Wyczyść",
         "search": "Szukaj"
+      }
+    },
+    "MediaCard": {
+      "popoverButton": "Czynności"
+    },
+    "VideoThumbnail": {
+      "playButtonA11yLabel": {
+        "default": "Odtwórz film",
+        "defaultWithDuration": "Odtwórz film o długości {duration}",
+        "duration": {
+          "hours": {
+            "other": {
+              "only": "Liczba godzin: {hourCount}",
+              "andMinutes": "{hourCount} godz. i {minuteCount} min.",
+              "andMinute": "{hourCount} godz. i {minuteCount} min.",
+              "minutesAndSeconds": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minutesAndSecond": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minuteAndSeconds": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minuteAndSecond": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "andSeconds": "{hourCount} godz. i {secondCount} sek.",
+              "andSecond": "{hourCount} godz. i {secondCount} sek."
+            },
+            "one": {
+              "only": "{hourCount} godzina",
+              "andMinutes": "{hourCount} godz. i {minuteCount} min.",
+              "andMinute": "{hourCount} godz. i {minuteCount} min.",
+              "minutesAndSeconds": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minutesAndSecond": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minuteAndSeconds": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "minuteAndSecond": "{hourCount} godz., {minuteCount} min. i {secondCount} sek.",
+              "andSeconds": "{hourCount} godz. i {secondCount} sek.",
+              "andSecond": "{hourCount} godz. i {secondCount} sek."
+            }
+          },
+          "minutes": {
+            "other": {
+              "only": "Liczba minut: {minuteCount}",
+              "andSeconds": "{minuteCount} min. i {secondCount} sek.",
+              "andSecond": "{minuteCount} min. i {secondCount} sek."
+            },
+            "one": {
+              "only": "{minuteCount} minuta",
+              "andSeconds": "{minuteCount} min. i {secondCount} sek.",
+              "andSecond": "{minuteCount} min. i {secondCount} sek."
+            }
+          },
+          "seconds": {
+            "other": "Liczba sekund: {secondCount}",
+            "one": "{secondCount} sekunda",
+            "few": "Liczba sekund: {secondCount}",
+            "many": "Liczba sekund: {secondCount}"
+          }
+        }
       }
     }
   }

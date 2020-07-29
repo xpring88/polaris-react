@@ -1,6 +1,7 @@
-import React from 'react';
-import {ScrollLockManager} from './scroll-lock-manager';
+import {createContext} from 'react';
 
-export const ScrollLockManagerContext = React.createContext<
+import type {ScrollLockManager} from './scroll-lock-manager';
+
+export const ScrollLockManagerContext = createContext<
   ScrollLockManager | undefined
 >(undefined);

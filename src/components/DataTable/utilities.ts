@@ -1,4 +1,4 @@
-import {DataTableState} from './types';
+import type {DataTableState} from './types';
 
 interface TableMeasurements {
   firstVisibleColumnIndex: number;
@@ -7,7 +7,7 @@ interface TableMeasurements {
 }
 
 export function measureColumn(tableData: TableMeasurements) {
-  return function(column: HTMLElement, index: number) {
+  return function (column: HTMLElement, index: number) {
     const {
       firstVisibleColumnIndex,
       tableLeftVisibleEdge: tableStart,

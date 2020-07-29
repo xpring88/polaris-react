@@ -4,20 +4,18 @@ import React, {
   useState,
   MouseEvent,
   ReactNode,
-  Fragment,
+  useCallback,
 } from 'react';
 
 import {classNames} from '../../../../utilities/css';
-
 import {NavigationContext} from '../../context';
 import {Badge} from '../../../Badge';
 import {Icon} from '../../../Icon';
-import {IconProps} from '../../../../types';
+import {IconProps, Key} from '../../../../types';
 import {Indicator} from '../../../Indicator';
 import {UnstyledLink} from '../../../UnstyledLink';
 import {useI18n} from '../../../../utilities/i18n';
 import {useMediaQuery} from '../../../../utilities/media-query';
-
 import styles from '../../Navigation.scss';
 
 import {Secondary} from './components';
@@ -87,12 +85,26 @@ export function Item({
   const {isNavigationCollapsed} = useMediaQuery();
   const {location, onNavigationDismiss} = useContext(NavigationContext);
   const [expanded, setExpanded] = useState(false);
+  const [keyFocused, setKeyFocused] = useState(false);
 
   useEffect(() => {
     if (!isNavigationCollapsed && expanded) {
       setExpanded(false);
     }
   }, [expanded, isNavigationCollapsed]);
+
+  const handleKeyUp = useCallback(
+    (event) => {
+      if (event.keyCode === Key.Tab) {
+        !keyFocused && setKeyFocused(true);
+      }
+    },
+    [keyFocused],
+  );
+
+  const handleBlur = useCallback(() => {
+    keyFocused && setKeyFocused(false);
+  }, [keyFocused]);
 
   const tabIndex = disabled ? -1 : 0;
 
@@ -135,20 +147,21 @@ export function Item({
     );
 
   const itemContentMarkup = (
-    <Fragment>
+    <>
       {iconMarkup}
       <span className={styles.Text}>
         {label}
         {indicatorMarkup}
       </span>
       {wrappedBadgeMarkup}
-    </Fragment>
+    </>
   );
 
   if (url == null) {
     const className = classNames(
       styles.Item,
       disabled && styles['Item-disabled'],
+      keyFocused && styles.keyFocused,
     );
 
     return (
@@ -160,6 +173,8 @@ export function Item({
           aria-disabled={disabled}
           aria-label={accessibilityLabel}
           onClick={getClickHandler(onClick)}
+          onKeyUp={handleKeyUp}
+          onBlur={handleBlur}
         >
           {itemContentMarkup}
         </button>
@@ -210,6 +225,7 @@ export function Item({
     disabled && styles['Item-disabled'],
     selected && subNavigationItems.length === 0 && styles['Item-selected'],
     showExpanded && styles.subNavigationActive,
+    keyFocused && styles.keyFocused,
   );
 
   let secondaryNavigationMarkup: ReactNode = null;
@@ -219,8 +235,13 @@ export function Item({
       ({url: firstUrl}, {url: secondUrl}) => secondUrl.length - firstUrl.length,
     )[0];
 
+    const SecondaryNavigationClassName = classNames(
+      styles.SecondaryNavigation,
+      !icon && styles['SecondaryNavigation-noIcon'],
+    );
+
     secondaryNavigationMarkup = (
-      <div className={styles.SecondaryNavigation}>
+      <div className={SecondaryNavigationClassName}>
         <Secondary expanded={showExpanded}>
           {subNavigationItems.map((item) => {
             const {label, ...rest} = item;
@@ -254,6 +275,8 @@ export function Item({
           aria-disabled={disabled}
           aria-label={accessibilityLabel}
           onClick={getClickHandler(onClick)}
+          onKeyUp={handleKeyUp}
+          onBlur={handleBlur}
         >
           {itemContentMarkup}
         </UnstyledLink>

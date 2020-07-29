@@ -1,13 +1,16 @@
 import React from 'react';
 import {
-  Image,
+  Button,
   DisplayText,
+  Image,
+  Stack,
   TextContainer,
   UnstyledLink,
-  Button,
 } from 'components';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider} from 'test-utilities/legacy';
+import {mountWithApp} from 'test-utilities';
+
 import {WithinContentContext} from '../../../utilities/within-content-context';
 import {EmptyState} from '../EmptyState';
 
@@ -171,6 +174,58 @@ describe('<EmptyState />', () => {
       const emptyState = mountWithAppProvider(<EmptyState image={imgSrc} />);
 
       expect(emptyState.find(TextContainer)).toHaveLength(0);
+    });
+  });
+
+  describe('newDesignLanguage', () => {
+    it('adds a classname to the root component', () => {
+      const emptyState = mountWithApp(<EmptyState image={imgSrc} />, {
+        features: {newDesignLanguage: true},
+      });
+      expect(emptyState).toContainReactComponent('div', {
+        className: 'EmptyState newDesignLanguage withinPage',
+      });
+    });
+
+    it('does not render a plain link as a secondaryAction', () => {
+      const emptyState = mountWithApp(
+        <EmptyState
+          image={imgSrc}
+          secondaryAction={{
+            content: 'Learn more',
+            url: 'https://help.shopify.com',
+          }}
+        />,
+        {features: {newDesignLanguage: true}},
+      );
+
+      expect(emptyState).toContainReactComponent(UnstyledLink, {
+        plain: undefined,
+      });
+    });
+
+    it('renders a medium size primary button', () => {
+      const emptyState = mountWithApp(
+        <EmptyState image={imgSrc} action={{content: 'Add transfer'}} />,
+        {features: {newDesignLanguage: true}},
+      );
+
+      expect(emptyState).toContainReactComponent(Button, {
+        size: 'medium',
+        primary: true,
+      });
+    });
+
+    it('adds center distribution and tight spacing to Stack', () => {
+      const emptyState = mountWithApp(
+        <EmptyState image={imgSrc} action={{content: 'Add transfer'}} />,
+        {features: {newDesignLanguage: true}},
+      );
+
+      expect(emptyState).toContainReactComponent(Stack, {
+        spacing: 'tight',
+        distribution: 'center',
+      });
     });
   });
 });

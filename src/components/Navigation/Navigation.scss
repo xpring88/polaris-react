@@ -2,8 +2,9 @@
 @import './variables';
 
 // Base Navigation styles
+$active-indicator-width: rem(3px);
 $nav-max-width: rem(360px);
-$unstable-nav-max-width: rem(258px);
+$new-nav-max-width: rem(258px);
 .Navigation {
   display: flex;
   flex-direction: column;
@@ -29,7 +30,7 @@ $unstable-nav-max-width: rem(258px);
   }
 
   &.Navigation-newDesignLanguage {
-    max-width: $unstable-nav-max-width;
+    max-width: $new-nav-max-width;
     border-right: 1px solid var(--p-border-subdued);
   }
 }
@@ -48,6 +49,7 @@ $unstable-nav-max-width: rem(258px);
 
     .Navigation-newDesignLanguage & {
       display: block;
+      min-height: new-top-bar-height();
     }
   }
 }
@@ -65,11 +67,11 @@ $unstable-nav-max-width: rem(258px);
   display: none;
   @include breakpoint-after(nav-min-window-corrected()) {
     display: flex;
-    flex: 0 0 unstable-top-bar-height();
+    flex: 0 0 new-top-bar-height();
     align-items: center;
     height: 100%;
     padding: 0 spacing(tight) 0 spacing(base);
-    @include safe-area-for(flex-basis, unstable-top-bar-height(), left);
+    @include safe-area-for(flex-basis, new-top-bar-height(), left);
     @include safe-area-for(padding-left, spacing(), left);
   }
 }
@@ -84,6 +86,24 @@ $disabled-fade: 0.6;
 
 .Item {
   @include nav-item-attributes;
+
+  .Navigation-newDesignLanguage & {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -1 * spacing(tight);
+      height: 100%;
+      width: $active-indicator-width;
+      background-color: var(--p-action-primary);
+      border-top-right-radius: var(--p-border-radius-base);
+      border-bottom-right-radius: var(--p-border-radius-base);
+      transform: translateX(-100%);
+      transition: transform var(--p-duration-1-5-0) var(--p-ease);
+    }
+  }
 }
 
 .Item-selected {
@@ -93,8 +113,15 @@ $disabled-fade: 0.6;
     --p-surface-primary-selected,
     $item-selected-background
   );
+
+  .Navigation-newDesignLanguage & {
+    &::before {
+      transform: translateX(0);
+    }
+  }
+
   @media (-ms-high-contrast: active) {
-    background-color: ms-high-contrast-color('selected-text-background');
+    outline: 1px solid ms-high-contrast-color('text');
   }
   // stylelint-disable selector-max-specificity
   .Icon,
@@ -105,7 +132,6 @@ $disabled-fade: 0.6;
     );
   }
   // stylelint-enable selector-max-specificity
-
   &:hover {
     background-color: var(
       --p-surface-primary-selected-hovered,
@@ -118,15 +144,17 @@ $disabled-fade: 0.6;
 
   &:focus {
     color: var(--p-action-primary, color('indigo', 'dark'));
-    @include focus-ring($style: 'focused');
   }
-  &:active {
-    background-color: var(
-      --p-surface-primary-selected-pressed,
-      $item-selected-background
-    );
-    color: var(--p-action-primary-pressed, color('indigo', 'dark'));
+  &:focus:active {
     @include no-focus-ring;
+    color: color('indigo', 'dark');
+    background-color: $item-selected-background;
+    // stylelint-disable-next-line selector-max-specificity
+    .Navigation-newDesignLanguage & {
+      @include recolor-icon(var(--p-action-primary-pressed));
+      color: var(--p-action-primary-pressed);
+      background-color: var(--p-surface-primary-selected-pressed);
+    }
   }
 }
 
@@ -257,26 +285,45 @@ $secondary-item-font-size: rem(15px);
   margin-bottom: spacing(tight);
   margin-left: nav(icon-size) + spacing(loose);
   overflow-x: var(--p-override-visible, hidden);
+
+  .Navigation-newDesignLanguage & {
+    margin-left: 0;
+  }
+
   @include breakpoint-after(nav-min-window-corrected()) {
     margin-left: nav(icon-size) + spacing();
   }
+
   .List {
     @include unstyled-list;
   }
+
   .Item {
     font-size: $secondary-item-font-size;
     font-weight: 400;
     line-height: nav(item-line-height);
-    color: var(--p-text, color('ink', 'light'));
+    color: var(--p-text-subdued, color('ink', 'light'));
+    // stylelint-disable-next-line selector-max-specificity, selector-max-combinators, selector-max-class
+    .Navigation-newDesignLanguage & {
+      @include focus-ring;
+      font-weight: 500;
+      padding-left: nav(icon-size) + spacing(extra-loose);
+
+      @include breakpoint-after(nav-min-window-corrected()) {
+        font-size: $item-font-size-small;
+      }
+      // stylelint-disable-next-line selector-max-specificity, selector-max-combinators, selector-max-class
+      &.keyFocused {
+        @include focus-ring($style: 'focused');
+      }
+    }
+
     &:hover {
       color: var(--p-action-primary, color('indigo', 'dark'));
     }
 
-    @include focus-ring;
-
     &:focus {
       color: var(--p-text, color('indigo', 'dark'));
-      @include focus-ring($style: 'focused');
     }
     // stylelint-disable selector-max-specificity
     &:focus:hover {
@@ -293,6 +340,7 @@ $secondary-item-font-size: rem(15px);
       line-height: rem(28px);
     }
   }
+
   .Text {
     margin-top: nav(mobile-spacing);
     margin-bottom: nav(mobile-spacing);
@@ -301,7 +349,13 @@ $secondary-item-font-size: rem(15px);
       margin-top: spacing(extra-tight);
       margin-bottom: spacing(extra-tight);
     }
+    // stylelint-disable-next-line selector-max-class, selector-max-combinators
+    .Navigation-newDesignLanguage & {
+      margin-top: rem(6px);
+      margin-bottom: rem(6px);
+    }
   }
+
   .Item-selected {
     font-weight: 600;
     color: var(--p-action-primary, color('indigo', 'dark'));
@@ -312,7 +366,6 @@ $secondary-item-font-size: rem(15px);
     }
     &:focus {
       color: var(--p-action-primary, color('indigo', 'dark'));
-      @include focus-ring($style: 'focused');
     }
     &:active {
       color: var(--p-action-primary-pressed, color('indigo', 'dark'));
@@ -323,6 +376,10 @@ $secondary-item-font-size: rem(15px);
     font-weight: 400;
     color: var(--p-text-disabled, color('ink', 'lightest'));
   }
+}
+
+.SecondaryNavigation-noIcon {
+  margin-left: spacing();
 }
 
 // Section styles

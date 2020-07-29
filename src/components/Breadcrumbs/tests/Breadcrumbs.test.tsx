@@ -1,7 +1,9 @@
 import React from 'react';
 // eslint-disable-next-line no-restricted-imports
 import {mountWithAppProvider} from 'test-utilities/legacy';
-import {CallbackAction, LinkAction} from '../../../types';
+
+import {UnstyledLink} from '../../UnstyledLink';
+import type {CallbackAction, LinkAction} from '../../../types';
 import {Breadcrumbs} from '../Breadcrumbs';
 
 describe('<Breadcrumbs />', () => {
@@ -11,7 +13,6 @@ describe('<Breadcrumbs />', () => {
         {
           content: 'Products',
           url: 'https://www.shopify.com',
-          target: 'REMOTE',
         },
       ];
 
@@ -27,7 +28,6 @@ describe('<Breadcrumbs />', () => {
         {
           content: 'Products',
           url: 'https://shopify.com',
-          target: 'REMOTE',
           accessibilityLabel: 'Go to Products',
         },
       ];
@@ -91,6 +91,41 @@ describe('<Breadcrumbs />', () => {
 
       breadcrumbs.find('button').simulate('click');
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('newDesignLanguage', () => {
+    const linkBreadcrumbs: LinkAction[] = [
+      {
+        content: 'Products',
+        url: 'https://www.shopify.com',
+      },
+    ];
+
+    it('adds a newDesignLanguage class', () => {
+      const wrapper = mountWithAppProvider(
+        <Breadcrumbs breadcrumbs={linkBreadcrumbs} />,
+        {
+          features: {newDesignLanguage: true},
+        },
+      );
+
+      expect(wrapper.find(UnstyledLink).prop('className')).toStrictEqual(
+        'Breadcrumb newDesignLanguage',
+      );
+    });
+
+    it('does not add a newDesignLanguage class', () => {
+      const wrapper = mountWithAppProvider(
+        <Breadcrumbs breadcrumbs={linkBreadcrumbs} />,
+        {
+          features: {newDesignLanguage: false},
+        },
+      );
+
+      expect(wrapper.find(UnstyledLink).prop('className')).toStrictEqual(
+        'Breadcrumb',
+      );
     });
   });
 });

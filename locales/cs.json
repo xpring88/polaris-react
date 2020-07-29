@@ -18,7 +18,8 @@
         "success": "Zdařilo se",
         "warning": "Varování",
         "attention": "Upozornění",
-        "new": "Nové"
+        "new": "Nové",
+        "critical": "Kritický"
       }
     },
     "Button": {
@@ -26,7 +27,7 @@
       "connectedDisclosureAccessibilityLabel": "Související akce"
     },
     "Common": {
-      "checkbox": "zaškrtávací políčko",
+      "checkbox": "zaškrtávací pole",
       "undo": "Vrátit zpět",
       "cancel": "Zrušit",
       "newWindowAccessibilityHint": "(otevře nové okno)",
@@ -71,6 +72,15 @@
         "friday": "Pá",
         "saturday": "So",
         "sunday": "Ne"
+      },
+      "days": {
+        "monday": "Pondělí",
+        "tuesday": "Úterý",
+        "wednesday": "Středa",
+        "thursday": "Čtvrtek",
+        "friday": "Pátek",
+        "saturday": "Sobota",
+        "sunday": "Neděle"
       }
     },
     "DiscardConfirmationModal": {
@@ -121,7 +131,7 @@
       "moreFiltersWithCount": "Další filtry ({count})"
     },
     "Modal": {
-      "iFrameTitle": "značka těla",
+      "iFrameTitle": "kód těla stránky",
       "modalWarning": "V modálním parametru chybí následující povinné vlastnosti: {missingProps}"
     },
     "Pagination": {
@@ -153,13 +163,13 @@
       "ariaLivePlural": "{itemsLength} položek",
       "Item": {
         "actionsDropdownLabel": "Akce pro: {accessibilityLabel}",
-        "actionsDropdown": "Rozbalovací nabídka akcí",
+        "actionsDropdown": "Rozevírací nabídka akcí",
         "viewItem": "Zobrazit podrobnosti pro: {itemName}"
       },
       "BulkActions": {
         "actionsActivatorLabel": "Akce",
         "moreActionsActivatorLabel": "Další akce",
-        "warningMessage": "K zajištění lepšího uživatelského komfortu, by promo akcí mělo být maximálně {maxPromotedActions}."
+        "warningMessage": "Za účelem zlepšení uživatelské zkušenosti. Promo akcí by mělo být maximálně {maxPromotedActions}."
       },
       "FilterCreator": {
         "filterButtonLabel": "Filtr",
@@ -226,6 +236,59 @@
       "SearchField": {
         "clearButtonLabel": "Vymazat",
         "search": "Hledat"
+      }
+    },
+    "MediaCard": {
+      "popoverButton": "Akce"
+    },
+    "VideoThumbnail": {
+      "playButtonA11yLabel": {
+        "default": "Přehrát video",
+        "defaultWithDuration": "Přehrát video o délce: {duration}",
+        "duration": {
+          "hours": {
+            "other": {
+              "only": "{hourCount} h",
+              "andMinutes": "hodiny: {hourCount}, minuty: {minuteCount}",
+              "andMinute": "hodiny: {hourCount}, minuty: {minuteCount}",
+              "minutesAndSeconds": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minutesAndSecond": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minuteAndSeconds": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minuteAndSecond": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "andSeconds": "hodiny: {hourCount}, sekundy: {secondCount}",
+              "andSecond": "hodiny: {hourCount}, sekundy: {secondCount}"
+            },
+            "one": {
+              "only": "{hourCount} h",
+              "andMinutes": "hodiny: {hourCount}, minuty: {minuteCount}",
+              "andMinute": "hodiny: {hourCount}, minuty: {minuteCount}",
+              "minutesAndSeconds": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minutesAndSecond": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minuteAndSeconds": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "minuteAndSecond": "hodiny: {hourCount}, minuty: {minuteCount}, sekundy: {secondCount}",
+              "andSeconds": "hodiny: {hourCount}, sekundy: {secondCount}",
+              "andSecond": "hodiny: {hourCount}, sekundy: {secondCount}"
+            }
+          },
+          "minutes": {
+            "other": {
+              "only": "{minuteCount} min",
+              "andSeconds": "minuty: {minuteCount}, sekundy: {secondCount}",
+              "andSecond": "minuty: {minuteCount}, sekundy: {secondCount}"
+            },
+            "one": {
+              "only": "{minuteCount} min",
+              "andSeconds": "minuty: {minuteCount}, sekundy: {secondCount}",
+              "andSecond": "minuty: {minuteCount}, sekundy: {secondCount}"
+            }
+          },
+          "seconds": {
+            "other": "{secondCount} s",
+            "one": "{secondCount} s",
+            "few": "{secondCount} s",
+            "many": "{secondCount} s"
+          }
+        }
       }
     }
   }
